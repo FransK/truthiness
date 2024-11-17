@@ -1,5 +1,5 @@
 ### Send the lab-based.csv file to our upload server
-POST http://localhost:3001/api/upload HTTP/1.1
+POST http://0.0.0.0:8080/api/upload HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -12,3 +12,5 @@ Content-Type: text/csv
 
 < ./webserver/lab-based.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+###
+GET http://0.0.0.0:8080 HTTP/1.1
