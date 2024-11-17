@@ -7,11 +7,16 @@ import (
 )
 
 type application struct {
+	config config
+}
+
+type config struct {
+	addr string
 }
 
 // Start an HTTP server to respond to requests to upload data
 // and get useful pieces of data for the UI
-func (app application) Start() error {
+func (app *application) run() error {
 	const serverAddr string = "0.0.0.0:3001"
 	log.Printf("Starting HTTP server: %s\n", serverAddr)
 

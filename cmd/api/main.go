@@ -3,6 +3,13 @@ package main
 import "log"
 
 func main() {
-	app := application{}
-	log.Fatal(app.Start())
+	cfg := config{
+		addr: ":8080",
+	}
+
+	app := &application{
+		config: cfg,
+	}
+
+	log.Fatal(app.run())
 }
