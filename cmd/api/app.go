@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-type App struct {
+type application struct {
 }
 
 // Start an HTTP server to respond to requests to upload data
 // and get useful pieces of data for the UI
-func (app App) Start() error {
+func (app application) Start() error {
 	const serverAddr string = "0.0.0.0:3001"
 	log.Printf("Starting HTTP server: %s\n", serverAddr)
 
@@ -22,7 +22,7 @@ func (app App) Start() error {
 	return http.ListenAndServe(serverAddr, nil)
 }
 
-func (app App) uploadData(w http.ResponseWriter, r *http.Request) {
+func (app application) uploadData(w http.ResponseWriter, r *http.Request) {
 	log.Println("Upload Data invoked.")
 
 	file, _, err := r.FormFile("file")

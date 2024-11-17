@@ -3,6 +3,6 @@ package main
 import "log"
 
 func main() {
-	app := App{}
+	app := application{}
 	log.Fatal(app.Start())
 }
