@@ -1,3 +1,14 @@
-###
-
+### Send the lab-based.csv file to our upload server
 POST http://localhost:3001/api/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="text"
+
+title
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="lab-based.csv"
+Content-Type: text/csv
+
+< ./webserver/lab-based.csv
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
