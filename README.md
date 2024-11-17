@@ -1,1 +1,1 @@
-Project intended to store psych info from several Truthiness experiments in AWS DynamoDB, request that information using a webserver programmed in Go, and display that information in a React/d3js frontend.
+Project intended to store psych info from several Truthiness experiments in a NoSQL DB, request that information using a Go webserver, and display that information in a React/d3js frontend.
