@@ -4,10 +4,13 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/fransk/truthiness/tree/main/webserver/internal/store"
 )
 
 type application struct {
 	config config
+	store  store.Storage
 }
 
 type config struct {
