@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/fransk/truthiness/tree/main/webserver/internal/env"
-	"github.com/fransk/truthiness/tree/main/webserver/internal/store"
+	"github.com/fransk/truthiness/internal/env"
+	"github.com/fransk/truthiness/internal/store"
 )
 
 func main() {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fransk/truthiness/tree/main/webserver/internal/store"
+	"github.com/fransk/truthiness/internal/store"
 )
 
 type application struct {

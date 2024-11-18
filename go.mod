@@ -1,3 +1,3 @@
-module github.com/fransk/truthiness/tree/main/webserver
+module github.com/fransk/truthiness
 
 go 1.23.3
