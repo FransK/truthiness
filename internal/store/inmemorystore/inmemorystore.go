@@ -6,7 +6,11 @@ import "github.com/fransk/truthiness/internal/store"
 type InMemoryStorage struct {
 }
 
-func (store *InMemoryStorage) Trials() store.TrialRepository {
+func (store *InMemoryStorage) Experiments() store.ExperimentRepository {
+	return nil
+}
+
+func (store *InMemoryStorage) Trials(trialname string) store.TrialRepository {
 	return nil
 }
 
