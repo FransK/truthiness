@@ -16,7 +16,7 @@ type Experiment struct {
 // experiments contained within the database
 type ExperimentRepository interface {
 	Create(ctx context.Context) error
-	GetExperiments() ([]Experiment, error)
+	GetAll() ([]Experiment, error)
 }
 
 // Trial has an unknown number of columns which represent

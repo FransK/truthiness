@@ -2,42 +2,75 @@ package mongodbstore
 
 import (
 	"context"
+	"log"
 
 	"github.com/fransk/truthiness/internal/store"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewMongoDbStore(client *mongo.Client) store.Storage {
-	return MongoDbStorage{}
+func NewMongoDbStore(mongodb *mongo.Database) store.Storage {
+	return &MongoDbStorage{
+		db: mongodb,
+	}
 }
 
 type MongoDbStorage struct {
+	db *mongo.Database
 }
 
-func (store MongoDbStorage) Experiments() store.ExperimentRepository {
-	return MongoExperimentRepository{}
+func (store *MongoDbStorage) Experiments() store.ExperimentRepository {
+	return MongoExperimentRepository{
+		collection: store.db.Collection("experiments"),
+	}
 }
 
-func (store MongoDbStorage) Trials(experiment string) store.TrialRepository {
-	return MongoTrialRepository{}
+func (store *MongoDbStorage) Trials(experiment string) store.TrialRepository {
+	return MongoTrialRepository{
+		collection: store.db.Collection(experiment),
+	}
 }
 
-func (store MongoDbStorage) Users() store.UserRepository {
-	return MongoUserRepository{}
+func (store *MongoDbStorage) Users() store.UserRepository {
+	return MongoUserRepository{
+		collection: store.db.Collection("users"),
+	}
 }
 
 type MongoExperimentRepository struct {
+	collection *mongo.Collection
 }
 
 func (repo MongoExperimentRepository) Create(ctx context.Context) error {
 	return nil
 }
 
-func (repo MongoExperimentRepository) GetExperiments() ([]store.Experiment, error) {
-	return nil, nil
+func (repo MongoExperimentRepository) GetAll() ([]store.Experiment, error) {
+	cursor, err := repo.collection.Find(context.TODO(), bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var experiments []store.Experiment
+	for cursor.Next(context.TODO()) {
+		var result store.Experiment
+		err := cursor.Decode(&result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		experiments = append(experiments, result)
+	}
+	if err = cursor.Err(); err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return experiments, nil
 }
 
 type MongoUserRepository struct {
+	collection *mongo.Collection
 }
 
 func (repo MongoUserRepository) GetById(ctx context.Context) (*store.User, error) {
@@ -49,6 +82,7 @@ func (repo MongoUserRepository) Create(ctx context.Context) error {
 }
 
 type MongoTrialRepository struct {
+	collection *mongo.Collection
 }
 
 func (repo MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
