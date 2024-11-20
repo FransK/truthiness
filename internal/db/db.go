@@ -33,3 +33,12 @@ func New(addr string, maxOpenConns uint64, maxIdleTime time.Duration) (*mongo.Da
 
 	return database, nil
 }
+
+func Close(db *mongo.Database) error {
+	if err := db.Client().Disconnect(context.TODO()); err != nil {
+		return err
+	}
+
+	log.Println("MongoDB client disconnected.")
+	return nil
+}

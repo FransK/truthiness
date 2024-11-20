@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"time"
 
@@ -26,7 +25,7 @@ func main() {
 
 	switch env.GetString("STORAGE_TYPE", "MONGODB") {
 	case "MONGODB":
-		db, err := db.New(
+		mydb, err := db.New(
 			cfg.db.addr,
 			uint64(cfg.db.maxOpenConns),
 			cfg.db.maxIdleTime,
@@ -34,13 +33,9 @@ func main() {
 		if err != nil {
 			log.Panic(err)
 		}
-		defer func() {
-			if err = db.Client().Disconnect(context.TODO()); err != nil {
-				panic(err)
-			}
-		}()
+		defer db.Close(mydb)
 
-		store = mongodbstore.New(db)
+		store = mongodbstore.New(mydb)
 	default:
 		store = inmemorystore.New()
 	}
