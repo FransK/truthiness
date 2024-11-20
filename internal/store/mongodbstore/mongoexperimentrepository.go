@@ -18,7 +18,9 @@ func (repo MongoExperimentRepository) Create(ctx context.Context, experiment sto
 	if err != nil {
 		return err
 	}
-	log.Printf("Inserted document with ID %v\n", result.InsertedID)
+
+	log.Printf("Inserted new experiment with ID %v\n", result.InsertedID)
+
 	return nil
 }
 
