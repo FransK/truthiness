@@ -53,17 +53,8 @@ func (repo MongoExperimentRepository) GetAll() ([]store.Experiment, error) {
 	defer cursor.Close(context.TODO())
 
 	var experiments []store.Experiment
-	for cursor.Next(context.TODO()) {
-		var result store.Experiment
-		err := cursor.Decode(&result)
-		if err != nil {
-			log.Fatal(err)
-		}
-		experiments = append(experiments, result)
-	}
-	if err = cursor.Err(); err != nil {
+	if err = cursor.All(context.Background(), &experiments); err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
 
 	return experiments, nil
