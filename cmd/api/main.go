@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -33,6 +34,11 @@ func main() {
 		if err != nil {
 			log.Panic(err)
 		}
+		defer func() {
+			if err = db.Client().Disconnect(context.TODO()); err != nil {
+				panic(err)
+			}
+		}()
 
 		store = mongodbstore.New(db)
 	default:

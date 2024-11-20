@@ -2,13 +2,12 @@ package inmemorystore
 
 import "github.com/fransk/truthiness/internal/store"
 
-// Store the Trials and Users in memory
+/* InMemoryStorage implements the storage interface to be used by our truthiness api*/
+type InMemoryStorage struct {
+}
 
 func New() store.Storage {
 	return InMemoryStorage{}
-}
-
-type InMemoryStorage struct {
 }
 
 func (store InMemoryStorage) Experiments() store.ExperimentRepository {

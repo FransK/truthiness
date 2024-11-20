@@ -4,6 +4,13 @@ import (
 	"context"
 )
 
+// Storage interface that combines all the repositories
+type Storage interface {
+	Experiments() ExperimentRepository
+	Trials(experiment string) TrialRepository
+	Users() UserRepository
+}
+
 // Experiment is a single run of an experiment that
 // will have recruited participants to a number of trials
 type Experiment struct {
@@ -40,11 +47,4 @@ type User struct {
 type UserRepository interface {
 	Create(ctx context.Context) error
 	GetById(ctx context.Context) (*User, error)
-}
-
-// Storage interface that combines all the repositories
-type Storage interface {
-	Experiments() ExperimentRepository
-	Trials(experiment string) TrialRepository
-	Users() UserRepository
 }
