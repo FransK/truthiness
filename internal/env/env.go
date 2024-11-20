@@ -3,6 +3,7 @@ package env
 import (
 	"os"
 	"strconv"
+	"time"
 )
 
 // GetString(key, fallback string) string
@@ -35,4 +36,22 @@ func GetInt(key string, fallback int) int {
 	}
 
 	return valAsInt
+}
+
+// GetDuration(key, fallback time.Duration) time.Duration
+// Looks for a key in Environment Variables
+// If found, returns value as a string
+// If not found, returns fallback
+func GetDuration(key string, fallback time.Duration) time.Duration {
+	val, ok := os.LookupEnv(key)
+	if !ok {
+		return fallback
+	}
+
+	valAsDuration, err := time.ParseDuration(val)
+	if err != nil {
+		return fallback
+	}
+
+	return valAsDuration
 }

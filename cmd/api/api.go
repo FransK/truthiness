@@ -15,6 +15,13 @@ type application struct {
 
 type config struct {
 	addr string
+	db   dbConfig
+}
+
+type dbConfig struct {
+	addr         string
+	maxOpenConns int
+	maxIdleTime  time.Duration
 }
 
 // The mux is the router for our webserver
