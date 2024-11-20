@@ -1,26 +1,24 @@
 package main
 
 import (
-	"log"
 	"net/http"
 )
 
 func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok"))
-
-	// Testing connection
-	experiments, err := app.store.Experiments().GetAll(r.Context())
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Printf("Experiments: %v", experiments)
-
 	/*
+		// Testing connection
+		experiments, err := app.store.Experiments().GetAll(r.Context())
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Printf("Experiments: %v", experiments)
+
 		// Testing insert
 		user := store.User{
 			ID: 1,
 		}
-		if err = app.store.Users().Create(r.Context(), user); err != nil {
+		if err = app.store.Users().Create(r.Context(), &user); err != nil {
 			log.Println(err.Error())
 		}
 
@@ -47,7 +45,7 @@ func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Reques
 			Date:     "November 10 1993",
 			Location: "sfu",
 		}
-		if err = app.store.Experiments().Create(r.Context(), experiment); err != nil {
+		if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
 			log.Println(err.Error())
 		}
 

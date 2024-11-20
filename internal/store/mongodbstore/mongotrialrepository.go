@@ -13,8 +13,8 @@ type MongoTrialRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo MongoTrialRepository) Create(ctx context.Context, trial store.Trial) error {
-	result, err := repo.collection.InsertOne(ctx, trial)
+func (repo *MongoTrialRepository) Create(ctx context.Context, trial *store.Trial) error {
+	result, err := repo.collection.InsertOne(ctx, *trial)
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func (repo MongoTrialRepository) Create(ctx context.Context, trial store.Trial) 
 	return nil
 }
 
-func (repo MongoTrialRepository) CreateMany(ctx context.Context, trials []store.Trial) error {
+func (repo *MongoTrialRepository) CreateMany(ctx context.Context, trials []store.Trial) error {
 	anytrials := make([]interface{}, len(trials))
 	for i, val := range trials {
 		anytrials[i] = val
@@ -40,7 +40,7 @@ func (repo MongoTrialRepository) CreateMany(ctx context.Context, trials []store.
 	return nil
 }
 
-func (repo MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
+func (repo *MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
 	cursor, err := repo.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err

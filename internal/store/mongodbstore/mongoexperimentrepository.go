@@ -13,8 +13,8 @@ type MongoExperimentRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo MongoExperimentRepository) Create(ctx context.Context, experiment store.Experiment) error {
-	result, err := repo.collection.InsertOne(ctx, experiment)
+func (repo *MongoExperimentRepository) Create(ctx context.Context, experiment *store.Experiment) error {
+	result, err := repo.collection.InsertOne(ctx, *experiment)
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func (repo MongoExperimentRepository) Create(ctx context.Context, experiment sto
 	return nil
 }
 
-func (repo MongoExperimentRepository) GetAll(ctx context.Context) ([]store.Experiment, error) {
+func (repo *MongoExperimentRepository) GetAll(ctx context.Context) ([]store.Experiment, error) {
 	cursor, err := repo.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
