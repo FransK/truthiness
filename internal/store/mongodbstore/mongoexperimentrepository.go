@@ -13,19 +13,24 @@ type MongoExperimentRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo MongoExperimentRepository) Create(ctx context.Context) error {
+func (repo MongoExperimentRepository) Create(ctx context.Context, experiment store.Experiment) error {
+	result, err := repo.collection.InsertOne(ctx, experiment)
+	if err != nil {
+		return err
+	}
+	log.Printf("Inserted document with ID %v\n", result.InsertedID)
 	return nil
 }
 
-func (repo MongoExperimentRepository) GetAll() ([]store.Experiment, error) {
-	cursor, err := repo.collection.Find(context.TODO(), bson.M{})
+func (repo MongoExperimentRepository) GetAll(ctx context.Context) ([]store.Experiment, error) {
+	cursor, err := repo.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(context.TODO())
+	defer cursor.Close(ctx)
 
 	var experiments []store.Experiment
-	if err = cursor.All(context.Background(), &experiments); err != nil {
+	if err = cursor.All(ctx, &experiments); err != nil {
 		log.Fatal(err)
 	}
 

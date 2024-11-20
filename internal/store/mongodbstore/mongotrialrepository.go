@@ -11,10 +11,14 @@ type MongoTrialRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
-	return nil, nil
+func (repo MongoTrialRepository) Create(ctx context.Context, trial store.Trial) error {
+	return nil
 }
 
-func (repo MongoTrialRepository) Create(ctx context.Context) error {
+func (repo MongoTrialRepository) CreateMany(ctx context.Context, trial []store.Trial) error {
 	return nil
+}
+
+func (repo MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
+	return nil, nil
 }

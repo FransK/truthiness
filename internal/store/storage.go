@@ -22,8 +22,8 @@ type Experiment struct {
 // ExperimentRepository contains a list of all the
 // experiments contained within the database
 type ExperimentRepository interface {
-	Create(ctx context.Context) error
-	GetAll() ([]Experiment, error)
+	Create(ctx context.Context, experiment Experiment) error
+	GetAll(ctx context.Context) ([]Experiment, error)
 }
 
 // Trial has an unknown number of columns which represent
@@ -35,7 +35,8 @@ type Trial struct {
 // TrialRepository represents all the trials in a single
 // experiment
 type TrialRepository interface {
-	Create(ctx context.Context) error
+	Create(ctx context.Context, trial Trial) error
+	CreateMany(ctx context.Context, trials []Trial) error
 	GetAll(ctx context.Context) ([]Trial, error)
 }
 
