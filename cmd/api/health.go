@@ -17,6 +17,20 @@ func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Reques
 
 	/*
 		// Testing insert
+		user := store.User{
+			ID: 1,
+		}
+		if err = app.store.Users().Create(r.Context(), user); err != nil {
+			log.Println(err.Error())
+		}
+
+		userptr, err := app.store.Users().GetById(r.Context(), 1)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Printf("User: %v", userptr)
+
+		// Testing insert
 		trial := store.Trial{
 			Data: map[string]string{
 				"pid":    "2",

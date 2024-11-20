@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/fransk/truthiness/internal/store"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -12,8 +13,13 @@ type MongoUserRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo MongoUserRepository) GetById(ctx context.Context) (*store.User, error) {
-	return nil, nil
+func (repo MongoUserRepository) GetById(ctx context.Context, id int64) (*store.User, error) {
+	var result store.User
+	if err := repo.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 func (repo MongoUserRepository) Create(ctx context.Context, user store.User) error {

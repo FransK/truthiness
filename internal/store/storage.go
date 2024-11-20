@@ -42,10 +42,10 @@ type TrialRepository interface {
 
 // User needs to have an identifier
 type User struct {
-	ID int64
+	ID int64 `bson:"_id"`
 }
 
 type UserRepository interface {
 	Create(ctx context.Context, user User) error
-	GetById(ctx context.Context) (*User, error)
+	GetById(ctx context.Context, id int64) (*User, error)
 }
