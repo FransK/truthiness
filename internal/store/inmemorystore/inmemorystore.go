@@ -4,7 +4,7 @@ import "github.com/fransk/truthiness/internal/store"
 
 // Store the Trials and Users in memory
 
-func NewInMemoryStore() store.Storage {
+func New() store.Storage {
 	return InMemoryStorage{}
 }
 

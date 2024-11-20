@@ -34,9 +34,9 @@ func main() {
 			log.Panic(err)
 		}
 
-		store = mongodbstore.NewMongoDbStore(db)
+		store = mongodbstore.New(db)
 	default:
-		store = inmemorystore.NewInMemoryStore()
+		store = inmemorystore.New()
 	}
 
 	log.Printf("Storage type: %T", store)
