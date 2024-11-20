@@ -15,7 +15,7 @@ func main() {
 	cfg := config{
 		addr: env.GetString("ADDR", ":8080"),
 		db: dbConfig{
-			addr:         env.GetString("DB_ADDR", "mongodb://localhost:27017"),
+			addr:         env.GetString("DB_ADDR", "mongodb://admin:adminpassword@localhost:27017/"),
 			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", 30),
 			maxIdleTime:  env.GetDuration("DB_MAX_IDLE_TIME", 15*time.Minute),
 		},

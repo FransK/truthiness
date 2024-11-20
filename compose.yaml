@@ -1,0 +1,10 @@
+name: truthiness
+
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+    ports:
+      - "27017:27017"
