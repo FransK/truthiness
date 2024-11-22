@@ -23,7 +23,7 @@ func main() {
 
 	var store store.Storage
 
-	switch env.GetString("STORAGE_TYPE", "MONGODB") {
+	switch env.GetString("STORAGE_TYPE", "IN_MEMORY") {
 	case "MONGODB":
 		mydb, err := db.New(
 			cfg.db.addr,

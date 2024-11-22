@@ -9,28 +9,18 @@ import (
 )
 
 func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ok"))
-
-	// Testing connection
-	experiments, err := app.store.Experiments().GetAll(r.Context())
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Printf("Experiments: %v", experiments)
-
 	// Testing insert
 	user := store.User{
 		ID: 1,
 	}
-	if err = app.store.Users().Create(r.Context(), &user); err != nil {
+	if err := app.store.Users().Create(r.Context(), &user); err != nil {
 		log.Println(err.Error())
 	}
 
-	userptr, err := app.store.Users().GetById(r.Context(), 1)
+	_, err := app.store.Users().GetById(r.Context(), 1)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Printf("User: %v", userptr)
 
 	// Testing insert
 	experiment := store.Experiment{
@@ -42,11 +32,10 @@ func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 
-	experiments, err = app.store.Experiments().GetAll(r.Context())
+	_, err = app.store.Experiments().GetAll(r.Context())
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Printf("Experiments: %v", experiments)
 
 	// Testing insert
 	trials := make([]store.Trial, 10)

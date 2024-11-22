@@ -4,20 +4,37 @@ import "github.com/fransk/truthiness/internal/store"
 
 /* InMemoryStorage implements the storage interface to be used by our truthiness api*/
 type InMemoryStorage struct {
+	experiments *InMemoryExperimentRepository
+	trials      map[string]*InMemoryTrialRepository
+	users       *InMemoryUserRepository
 }
 
 func New() store.Storage {
-	return InMemoryStorage{}
+	return &InMemoryStorage{
+		experiments: &InMemoryExperimentRepository{
+			experiments: make([]store.Experiment, 0),
+		},
+		trials: make(map[string]*InMemoryTrialRepository),
+		users: &InMemoryUserRepository{
+			users: make(map[int64]store.User),
+		},
+	}
 }
 
-func (store InMemoryStorage) Experiments() store.ExperimentRepository {
-	return nil
+func (storage InMemoryStorage) Experiments() store.ExperimentRepository {
+	return storage.experiments
 }
 
-func (store InMemoryStorage) Trials(trialname string) store.TrialRepository {
-	return nil
+func (storage InMemoryStorage) Trials(trialname string) store.TrialRepository {
+	if v, ok := storage.trials[trialname]; ok {
+		return v
+	}
+	storage.trials[trialname] = &InMemoryTrialRepository{
+		trials: make([]store.Trial, 0),
+	}
+	return storage.trials[trialname]
 }
 
-func (store InMemoryStorage) Users() store.UserRepository {
-	return nil
+func (storage InMemoryStorage) Users() store.UserRepository {
+	return storage.users
 }
