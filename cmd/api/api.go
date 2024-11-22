@@ -24,12 +24,14 @@ type dbConfig struct {
 	maxIdleTime  time.Duration
 }
 
-// The mux is the router for our webserver
+// Create an HTTP request multiplexer
 func (app *application) mount() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// http handlers
 	mux.HandleFunc("GET /v1/health", app.healthCheckHandler)
+	mux.HandleFunc("GET /v1/experiment/{experimentname}/trials", app.getExperimentHandler)
+	mux.HandleFunc("GET /v1/test", app.testHandler)
 	mux.HandleFunc("POST /v1/upload", app.uploadDataHandler)
 
 	return mux

@@ -10,13 +10,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func New(addr string, maxOpenConns uint64, maxIdleTime time.Duration) (*mongo.Database, error) {
+func New(addr string, maxOpenConns int, maxIdleTime time.Duration) (*mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	clientOpts := options.Client()
 	clientOpts.ApplyURI(addr)
-	clientOpts.SetMaxConnecting(maxOpenConns)
+	clientOpts.SetMaxConnecting(uint64(maxOpenConns))
 	clientOpts.SetMaxConnIdleTime(maxIdleTime)
 
 	client, err := mongo.Connect(ctx, clientOpts)

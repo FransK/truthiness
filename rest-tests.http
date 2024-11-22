@@ -14,3 +14,5 @@ Content-Type: text/csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ###
 GET http://localhost:8080/v1/health HTTP/1.1
+###
+GET http://localhost:8080/v1/experiment/lab HTTP/1.1
