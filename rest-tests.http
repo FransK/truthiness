@@ -3,14 +3,15 @@ POST http://localhost:8080/v1/upload HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="text"
+Content-Disposition: form-data; name="title"
+Content-Type: text/plain
 
-title
+lab-based-clean
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="lab-based.csv"
+Content-Disposition: form-data; name="file"; filename="lab-based-clean.csv"
 Content-Type: text/csv
 
-< ./lab-based.csv
+< ./lab-based-clean.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ###
 GET http://localhost:8080/v1/health HTTP/1.1
