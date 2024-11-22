@@ -38,20 +38,20 @@ func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	// in first row and data in subsequent rows
 	// TODO: Add ability for USER to determine col names and row where data starts
 	// with some sort of previewer
-	keys := []string{}
+	keys := make([]string, 0, len(rows[0]))
 	keys = append(keys, rows[0]...)
 
-	trials := make([]store.Trial, len(rows))
+	trials := make([]store.Trial, 0, len(rows))
 	for _, row := range rows[1:] {
-		data := make(map[string]string, len(row))
+		data := make(map[string]string)
 		i := 0
 		for _, key := range keys {
 			if i >= len(row) {
-				break
+				data[key] = ""
+			} else {
+				data[key] = row[i]
+				i++
 			}
-
-			data[key] = row[i]
-			i++
 		}
 
 		log.Println(data)
@@ -61,7 +61,7 @@ func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 		})
 	}
 
-	// if err = app.store.Trials(title).CreateMany(r.Context(), trials); err != nil {
-	// 	log.Println(err.Error())
-	// }
+	if err = app.store.Trials(title).CreateMany(r.Context(), trials); err != nil {
+		log.Println(err.Error())
+	}
 }
