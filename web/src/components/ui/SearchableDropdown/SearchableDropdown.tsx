@@ -34,8 +34,7 @@ export default function MyDropdown({
   };
 
   function toggleHandler() {
-    let activeElement = document.activeElement;
-    if (activeElement !== document.getElementById("searchBox")) {
+    if (document.activeElement !== document.getElementById("searchBox")) {
       setIsOpen(false);
     } else {
       setIsOpen(true);
