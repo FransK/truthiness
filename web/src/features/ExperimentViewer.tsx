@@ -7,7 +7,7 @@ import { animals } from "../testdata/animals";
 import { data01, data02 } from "../testdata/chartdata";
 
 export default function ExperimentViewer() {
-  const [experiment, setExperiment] = useState("Select experiment...");
+  const [experiment, setExperiment] = useState("");
 
   return (
     <div className="experiment-viewer">
