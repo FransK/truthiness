@@ -1,23 +1,37 @@
 import { useEffect, useRef, useState } from "react"
 
-export default function SearchableDropdown({options, label, id, selectedVal, handleChange}) {
+interface MyDropdownProps {
+    options: {[key: number]: string}[],
+    label: string,
+    id: string,
+    selectedVal: string,
+    handleChange: (val: string) => void
+  }
+
+export default function MyDropdown({options, label, id, selectedVal, handleChange}:
+    MyDropdownProps)
+{
     const [query, setQuery] = useState("")
-    const [isOpen, setIsOpen] = useState("")
+    const [isOpen, setIsOpen] = useState(false)
 
     const inputRef = useRef(null);
 
     useEffect(() => {
-        document.addEventListener("click", toggle);
-        return () => document.removeEventListener("click", toggle);
+        document.addEventListener("click", toggleHandler);
+        return () => document.removeEventListener("click", toggleHandler);
     }, []);
 
-    const selectOption = (option) => {
+    const selectOption = (option: {[key: string]: string}) => {
         setQuery(() => "");
         handleChange(option[label]);
         setIsOpen((isOpen) => !isOpen);
     };
 
-    function toggle(e) {
+    function toggleHandler(e: MouseEvent) {
+        setIsOpen(e && e.target === inputRef.current);
+    }
+
+    function toggle(e: React.MouseEvent<HTMLElement>) {
         setIsOpen(e && e.target === inputRef.current);
     }
 
@@ -28,14 +42,14 @@ export default function SearchableDropdown({options, label, id, selectedVal, han
         return "";
     };
 
-    const filter = (options) => {
+    let filter = (options: {[key: string]: string}[]) => {
         return options.filter(
             (option) => option[label].toLowerCase().indexOf(query.toLowerCase()) > -1
         );
     };
       
     return (
-        <div className="dropdown">
+        <div className={`dropdown ${isOpen ? "open" : ""}`}>
             <div className="control">
                 <div className="selected-value">
                 <input
@@ -45,12 +59,11 @@ export default function SearchableDropdown({options, label, id, selectedVal, han
                     name="searchTerm"
                     onChange={(e) => {
                     setQuery(e.target.value);
-                    handleChange(null);
+                    handleChange("");
                     }}
                     onClick={toggle}
                 />
                 </div>
-                <div className={`arrow ${isOpen ? "open" : ""}`}></div>
             </div>
 
             <div className={`options ${isOpen ? "open" : ""}`}>
