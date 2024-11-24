@@ -33,12 +33,13 @@ export default function MyDropdown({
     handleChange(option[label]);
   };
 
-  function toggleHandler(e: MouseEvent) {
-    setIsOpen(e && e.target === inputRef.current);
-  }
-
-  function toggle(e: React.MouseEvent<HTMLElement>) {
-    setIsOpen(e && e.target === inputRef.current);
+  function toggleHandler() {
+    let activeElement = document.activeElement;
+    if (activeElement !== document.getElementById("searchBox")) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
   }
 
   function keyDownHandler() {
@@ -67,12 +68,12 @@ export default function MyDropdown({
             type="text"
             value={getDisplayValue()}
             placeholder="Select experiment..."
+            id="searchBox"
             name="searchTerm"
             onChange={(e) => {
               setQuery(e.target.value);
               handleChange("");
             }}
-            onClick={toggle}
             onKeyDown={keyDownHandler}
           />
         </div>
