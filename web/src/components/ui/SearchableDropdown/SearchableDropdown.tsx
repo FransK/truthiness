@@ -3,8 +3,7 @@ import "./SearchableDropdown.css";
 import { useEffect, useRef, useState } from "react";
 
 interface MyDropdownProps {
-  options: { [key: number]: string }[];
-  label: string;
+  options: string[];
   id: string;
   selectedVal: string;
   handleChange: (val: string) => void;
@@ -12,7 +11,6 @@ interface MyDropdownProps {
 
 export default function MyDropdown({
   options,
-  label,
   id,
   selectedVal,
   handleChange,
@@ -27,10 +25,10 @@ export default function MyDropdown({
     return () => document.removeEventListener("click", toggleHandler);
   }, []);
 
-  const selectOption = (option: { [key: string]: string }) => {
+  const selectOption = (option: string) => {
     setQuery(() => "");
     setIsOpen(false);
-    handleChange(option[label]);
+    handleChange(option);
   };
 
   function toggleHandler() {
@@ -52,9 +50,9 @@ export default function MyDropdown({
     return "";
   };
 
-  let filter = (options: { [key: string]: string }[]) => {
+  let filter = (options: string[]) => {
     return options.filter(
-      (option) => option[label].toLowerCase().indexOf(query.toLowerCase()) > -1
+      (option) => option.toLowerCase().indexOf(query.toLowerCase()) > -1
     );
   };
 
@@ -83,12 +81,10 @@ export default function MyDropdown({
           return (
             <div
               onClick={() => selectOption(option)}
-              className={`option ${
-                option[label] === selectedVal ? "selected" : ""
-              }`}
+              className={`option ${option === selectedVal ? "selected" : ""}`}
               key={`${id}-${index}`}
             >
-              {option[label]}
+              {option}
             </div>
           );
         })}
