@@ -19,7 +19,7 @@ export default function MyScatter({
   return (
     <ScatterChart
       width={730}
-      height={250}
+      height={400}
       margin={{
         top: 20,
         right: 20,
@@ -35,7 +35,7 @@ export default function MyScatter({
       />
       <YAxis
         dataKey={ykey}
-        label={{ value: ykey, angle: -90, position: "insideLeft" }}
+        label={{ value: ykey, angle: -90, position: "insideLeftBottom" }}
         type="number"
       />
       <Tooltip cursor={{ strokeDasharray: "3 3" }} />
