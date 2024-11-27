@@ -9,6 +9,8 @@ type Storage interface {
 	Experiments() ExperimentRepository
 	Trials(experiment string) TrialRepository
 	Users() UserRepository
+
+	WithTransaction(ctx context.Context, fn func() (interface{}, error)) (interface{}, error)
 }
 
 // Experiment is a single run of an experiment that

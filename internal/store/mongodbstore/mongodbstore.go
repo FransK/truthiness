@@ -1,6 +1,8 @@
 package mongodbstore
 
 import (
+	"context"
+
 	"github.com/fransk/truthiness/internal/store"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -36,4 +38,28 @@ func (store *MongoDbStore) Users() store.UserRepository {
 	return &MongoUserRepository{
 		collection: store.db.Collection("users"),
 	}
+}
+
+func (store *MongoDbStore) WithTransaction(ctx context.Context, fn func() (interface{}, error)) (interface{}, error) {
+	session, err := store.db.Client().StartSession()
+	if err != nil {
+		return nil, err
+	}
+	defer session.EndSession(ctx)
+
+	if err = session.StartTransaction(); err != nil {
+		return nil, err
+	}
+
+	result, err := fn()
+	if err != nil {
+		session.AbortTransaction(ctx)
+		return nil, err
+	}
+
+	if err = session.CommitTransaction(ctx); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

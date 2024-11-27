@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/csv"
 	"log"
 	"net/http"
@@ -79,11 +80,18 @@ func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 		Records:  slices.Clone(keys),
 	}
 
-	if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
-		log.Println(err.Error())
-	}
+	fn := func() (interface{}, error) {
+		if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
+			log.Println(err.Error())
+			return nil, err
+		}
 
-	if err = app.store.Trials(experimentname).CreateMany(r.Context(), trials); err != nil {
-		log.Println(err.Error())
+		if err = app.store.Trials(experimentname).CreateMany(r.Context(), trials); err != nil {
+			log.Println(err.Error())
+			return nil, err
+		}
+
+		return "success", nil
 	}
+	app.store.WithTransaction(context.TODO(), fn)
 }

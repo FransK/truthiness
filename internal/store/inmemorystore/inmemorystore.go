@@ -1,6 +1,10 @@
 package inmemorystore
 
-import "github.com/fransk/truthiness/internal/store"
+import (
+	"context"
+
+	"github.com/fransk/truthiness/internal/store"
+)
 
 /* InMemoryStorage implements the storage interface to be used by our truthiness api*/
 type InMemoryStorage struct {
@@ -37,4 +41,9 @@ func (storage InMemoryStorage) Trials(trialname string) store.TrialRepository {
 
 func (storage InMemoryStorage) Users() store.UserRepository {
 	return storage.users
+}
+
+func (storage InMemoryStorage) WithTransaction(ctx context.Context, fn func() (interface{}, error)) (interface{}, error) {
+	// TODO: Can add transaction logic later for InMemoryStorage, testing for failures along way of executing fn
+	return fn()
 }
