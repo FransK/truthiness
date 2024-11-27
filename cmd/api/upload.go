@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"log"
 	"net/http"
+	"slices"
 
 	"github.com/fransk/truthiness/internal/store"
 )
@@ -11,12 +12,22 @@ import (
 func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Upload Data invoked.")
 
-	title := r.FormValue("title")
-	if title == "" {
-		http.Error(w, "No title provided", http.StatusBadRequest)
+	experimentname := r.FormValue("experiment")
+	if experimentname == "" {
+		http.Error(w, "No experiment name provided", http.StatusBadRequest)
 		return
 	}
-	log.Println("Title: ", title)
+	experimentdate := r.FormValue("date")
+	if experimentdate == "" {
+		http.Error(w, "No experiment date provided", http.StatusBadRequest)
+		return
+	}
+	experimentlocation := r.FormValue("location")
+	if experimentlocation == "" {
+		http.Error(w, "No experiment location provided", http.StatusBadRequest)
+		return
+	}
+	log.Printf("Experiment: %v - %v at %v", experimentname, experimentdate, experimentlocation)
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -61,7 +72,18 @@ func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 		})
 	}
 
-	if err = app.store.Trials(title).CreateMany(r.Context(), trials); err != nil {
+	experiment := store.Experiment{
+		Name:     experimentname,
+		Date:     "November 10 1993",
+		Location: "sfu",
+		Records:  slices.Clone(keys),
+	}
+
+	if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
+		log.Println(err.Error())
+	}
+
+	if err = app.store.Trials(experimentname).CreateMany(r.Context(), trials); err != nil {
 		log.Println(err.Error())
 	}
 }

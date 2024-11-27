@@ -3,10 +3,20 @@ POST http://localhost:8080/v1/upload HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="title"
+Content-Disposition: form-data; name="experiment"
 Content-Type: text/plain
 
 lab-based-clean
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="date"
+Content-Type: text/plain
+
+March 22, 2024
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="location"
+Content-Type: text/plain
+
+SFU
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="file"; filename="lab-based-clean.csv"
 Content-Type: text/csv

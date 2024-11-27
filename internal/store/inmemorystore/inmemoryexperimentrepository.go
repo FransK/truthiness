@@ -16,6 +16,7 @@ func (repo *InMemoryExperimentRepository) Create(ctx context.Context, experiment
 		Name:     experiment.Name,
 		Date:     experiment.Date,
 		Location: experiment.Location,
+		Records:  slices.Clone(experiment.Records),
 	}
 	repo.experiments = append(repo.experiments, newExperiment)
 	return nil

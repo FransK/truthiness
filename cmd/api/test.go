@@ -27,6 +27,7 @@ func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "scienceworld",
 		Date:     "November 10 1993",
 		Location: "sfu",
+		Records:  []string{"pid", "answer", "answer2", "answer3"},
 	}
 	if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
 		log.Println(err.Error())

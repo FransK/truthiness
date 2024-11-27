@@ -17,6 +17,7 @@ type Experiment struct {
 	Name     string
 	Date     string
 	Location string
+	Records  []string
 }
 
 // ExperimentRepository contains a list of all the
