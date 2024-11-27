@@ -3,13 +3,19 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
-  ZAxis,
   Tooltip,
-  Legend,
   Scatter,
 } from "recharts";
 
-export default function MyScatter({ data01 }: { data01: any[] }) {
+export default function MyScatter({
+  data,
+  xkey,
+  ykey,
+}: {
+  data: any[];
+  xkey: string;
+  ykey: string;
+}) {
   return (
     <ScatterChart
       width={730}
@@ -22,18 +28,18 @@ export default function MyScatter({ data01 }: { data01: any[] }) {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-      <YAxis dataKey="y" type="number" name="weight" unit="kg" />
-      <ZAxis
-        dataKey="z"
+      <XAxis
+        dataKey={xkey}
+        label={{ value: xkey, position: "insideBottom", offset: 0 }}
         type="number"
-        range={[64, 144]}
-        name="score"
-        unit="km"
+      />
+      <YAxis
+        dataKey={ykey}
+        label={{ value: ykey, angle: -90, position: "insideLeft" }}
+        type="number"
       />
       <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-      <Legend />
-      <Scatter name="A school" data={data01} fill="#8884d8" />
+      <Scatter name={ykey} data={data} fill="#8884d8" />
     </ScatterChart>
   );
 }

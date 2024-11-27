@@ -3,7 +3,6 @@ import "./ExperimentViewer.css";
 import { useEffect, useState } from "react";
 import MyScatter from "../components/ui/ScatterChart/ScatterChart";
 import MyDropdown from "../components/ui/SearchableDropdown/SearchableDropdown";
-import { data01 } from "../testdata/chartdata";
 
 export default function ExperimentViewer() {
   interface GetExperimentsResponse {
@@ -26,7 +25,7 @@ export default function ExperimentViewer() {
   interface GetTrialsResponse {
     data: {
       Data: { Key: string; Value: string }[];
-    };
+    }[];
   }
 
   const [experiments, setExperiments] = useState<IExperiments | null>(null);
@@ -119,7 +118,20 @@ export default function ExperimentViewer() {
           </div>
         </>
       ) : null}
-      <MyScatter data01={data01} />
+
+      {experiment && xaxis && yaxis ? (
+        <MyScatter
+          data={
+            trials
+              ? trials.data.map((d) => {
+                  return d.Data;
+                })
+              : []
+          }
+          xkey={xaxis}
+          ykey={yaxis}
+        />
+      ) : null}
     </div>
   );
 }
