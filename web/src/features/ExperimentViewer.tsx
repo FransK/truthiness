@@ -3,7 +3,7 @@ import "./ExperimentViewer.css";
 import { useEffect, useState } from "react";
 import MyScatter from "../components/ui/ScatterChart/ScatterChart";
 import MyDropdown from "../components/ui/SearchableDropdown/SearchableDropdown";
-import { data01, data02 } from "../testdata/chartdata";
+import { data01 } from "../testdata/chartdata";
 
 export default function ExperimentViewer() {
   interface GetExperimentsResponse {
@@ -11,12 +11,14 @@ export default function ExperimentViewer() {
       Name: string;
       Date: string;
       Location: string;
+      Records: string[];
     }[];
   }
 
   interface IExperiment {
     id: number;
     name: string;
+    records: string[];
   }
 
   type IExperiments = IExperiment[];
@@ -28,8 +30,16 @@ export default function ExperimentViewer() {
   }
 
   const [experiments, setExperiments] = useState<IExperiments | null>(null);
-  const [experiment, setExperiment] = useState("");
+  const [experiment, setExperiment] = useState<IExperiment | null>(null);
+  const [xaxis, setXaxis] = useState<string>("");
+  const [yaxis, setYaxis] = useState<string>("");
   const [trials, setTrials] = useState<GetTrialsResponse | null>(null);
+
+  function handleSetExperiment(name: string) {
+    setExperiment(
+      experiments ? experiments.find((e) => e.name === name) || null : null
+    );
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -42,6 +52,7 @@ export default function ExperimentViewer() {
             return {
               id: index,
               name: e.Name,
+              records: e.Records,
             };
           });
           setExperiments(experiments);
@@ -54,13 +65,13 @@ export default function ExperimentViewer() {
   }, []);
 
   useEffect(() => {
-    if (experiment === "") {
+    if (!experiment) {
       return;
     }
 
     let ignore = false;
     setTrials(null);
-    fetch(`http://localhost:8080/v1/experiments/${experiment}/trials`)
+    fetch(`http://localhost:8080/v1/experiments/${experiment.name}/trials`)
       .then((response) => response.json())
       .then((result: GetTrialsResponse) => {
         if (!ignore) {
@@ -80,12 +91,35 @@ export default function ExperimentViewer() {
         <h2>Select an experiment:</h2>
         <MyDropdown
           options={experiments ? experiments.map((e) => e.name) : []}
-          id="id"
-          selectedVal={experiment}
-          handleChange={(exp: string) => setExperiment(exp)}
+          id="experimentname"
+          selectedVal={experiment ? experiment.name : ""}
+          handleChange={(exp: string) => handleSetExperiment(exp)}
         />
       </div>
-      <MyScatter data01={data01} data02={data02} />
+
+      {experiment ? (
+        <>
+          <div className="experiment">
+            <h2>Select an X-Axis:</h2>
+            <MyDropdown
+              options={experiment !== null ? experiment.records : []}
+              id="x-axis"
+              selectedVal={xaxis}
+              handleChange={(record: string) => setXaxis(record)}
+            />
+          </div>
+          <div className="experiment">
+            <h2>Select a Y-Axis:</h2>
+            <MyDropdown
+              options={experiment !== null ? experiment.records : []}
+              id="y-axis"
+              selectedVal={yaxis}
+              handleChange={(record: string) => setYaxis(record)}
+            />
+          </div>
+        </>
+      ) : null}
+      <MyScatter data01={data01} />
     </div>
   );
 }

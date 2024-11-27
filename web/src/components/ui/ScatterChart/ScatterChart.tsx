@@ -9,13 +9,7 @@ import {
   Scatter,
 } from "recharts";
 
-export default function MyScatter({
-  data01,
-  data02,
-}: {
-  data01: { x: number; y: number; z: number }[];
-  data02: { x: number; y: number; z: number }[];
-}) {
+export default function MyScatter({ data01 }: { data01: any[] }) {
   return (
     <ScatterChart
       width={730}
@@ -40,7 +34,6 @@ export default function MyScatter({
       <Tooltip cursor={{ strokeDasharray: "3 3" }} />
       <Legend />
       <Scatter name="A school" data={data01} fill="#8884d8" />
-      <Scatter name="B school" data={data02} fill="#82ca9d" />
     </ScatterChart>
   );
 }

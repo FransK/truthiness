@@ -32,7 +32,7 @@ export default function MyDropdown({
   };
 
   function toggleHandler() {
-    if (document.activeElement !== document.getElementById("searchBox")) {
+    if (document.activeElement !== document.getElementById(id)) {
       setIsOpen(false);
     } else {
       setIsOpen(true);
@@ -65,7 +65,7 @@ export default function MyDropdown({
             type="text"
             value={getDisplayValue()}
             placeholder="Select experiment..."
-            id="searchBox"
+            id={id}
             name="searchTerm"
             onChange={(e) => {
               setQuery(e.target.value);
