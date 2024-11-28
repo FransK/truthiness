@@ -58,6 +58,7 @@ func (store *MongoDbStore) WithTransaction(ctx context.Context, fn func() (inter
 	}
 
 	if err = session.CommitTransaction(ctx); err != nil {
+		session.AbortTransaction(ctx)
 		return nil, err
 	}
 
