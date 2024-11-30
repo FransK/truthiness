@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/fransk/truthiness/internal/store"
 )
 
-func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Upload Data invoked.")
 
 	experimentname := r.FormValue("experiment")
@@ -81,17 +81,17 @@ func (app *application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	fn := func() (interface{}, error) {
-		if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
+		if err = app.Store.Experiments().Create(r.Context(), &experiment); err != nil {
 			log.Println(err.Error())
 			return nil, err
 		}
 
-		if err = app.store.Trials(experimentname).CreateMany(r.Context(), trials); err != nil {
+		if err = app.Store.Trials(experimentname).CreateMany(r.Context(), trials); err != nil {
 			log.Println(err.Error())
 			return nil, err
 		}
 
 		return "success", nil
 	}
-	app.store.WithTransaction(context.TODO(), fn)
+	app.Store.WithTransaction(context.TODO(), fn)
 }

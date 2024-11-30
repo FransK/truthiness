@@ -1,18 +1,18 @@
-package main
+package api
 
 import (
 	"errors"
 	"net/http"
 )
 
-func (app *application) getTrialsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Application) getTrialsHandler(w http.ResponseWriter, r *http.Request) {
 	experimentname := r.PathValue("experimentname")
 	if experimentname == "" {
 		app.badRequestResponse(w, r, errors.New("bad request"))
 		return
 	}
 
-	trials, err := app.store.Trials(experimentname).GetAll(r.Context())
+	trials, err := app.Store.Trials(experimentname).GetAll(r.Context())
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

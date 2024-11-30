@@ -1,31 +1,17 @@
-package main
+package api
 
 import (
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/fransk/truthiness/internal/store"
 )
 
-type application struct {
-	config config
-	store  store.Storage
-}
-
-type config struct {
-	addr string
-	db   dbConfig
-}
-
-type dbConfig struct {
-	addr         string
-	maxOpenConns int
-	maxIdleTime  time.Duration
+func (app *Application) RunNew() error {
+	return app.run(app.mount())
 }
 
 // Create an HTTP request multiplexer
-func (app *application) mount() *http.ServeMux {
+func (app *Application) mount() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// http handlers
@@ -40,9 +26,9 @@ func (app *application) mount() *http.ServeMux {
 
 // Start an HTTP server to respond to requests to upload data
 // and get useful pieces of data for the UI
-func (app *application) run(mux *http.ServeMux) error {
+func (app *Application) run(mux *http.ServeMux) error {
 	srv := &http.Server{
-		Addr:         app.config.addr,
+		Addr:         app.Config.Addr,
 		Handler:      mux,
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 10,
@@ -50,7 +36,7 @@ func (app *application) run(mux *http.ServeMux) error {
 	}
 
 	// log info for user
-	log.Printf("Starting HTTP server: %s\n", app.config.addr)
+	log.Printf("Starting HTTP server: %s\n", app.Config.Addr)
 
 	// open the port
 	return srv.ListenAndServe()

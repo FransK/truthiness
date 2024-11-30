@@ -21,9 +21,9 @@ SFU
 Content-Disposition: form-data; name="file"; filename="lab-based-clean.csv"
 Content-Type: text/csv
 
-< ./lab-based-clean.csv
+< ../test-data/lab-based-clean.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ###
 GET http://localhost:8080/v1/health HTTP/1.1
 ###
-GET http://localhost:8080/v1/experiment/lab HTTP/1.1
+GET http://localhost:8080/v1/experiments/lab-based-clean/trials HTTP/1.1

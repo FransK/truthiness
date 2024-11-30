@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"log"
@@ -8,16 +8,16 @@ import (
 	"github.com/fransk/truthiness/internal/store"
 )
 
-func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Application) testHandler(w http.ResponseWriter, r *http.Request) {
 	// Testing insert
 	user := store.User{
 		ID: 1,
 	}
-	if err := app.store.Users().Create(r.Context(), &user); err != nil {
+	if err := app.Store.Users().Create(r.Context(), &user); err != nil {
 		log.Println(err.Error())
 	}
 
-	_, err := app.store.Users().GetById(r.Context(), 1)
+	_, err := app.Store.Users().GetById(r.Context(), 1)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -29,11 +29,11 @@ func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
 		Location: "sfu",
 		Records:  []string{"pid", "answer", "answer2", "answer3"},
 	}
-	if err = app.store.Experiments().Create(r.Context(), &experiment); err != nil {
+	if err = app.Store.Experiments().Create(r.Context(), &experiment); err != nil {
 		log.Println(err.Error())
 	}
 
-	_, err = app.store.Experiments().GetAll(r.Context())
+	_, err = app.Store.Experiments().GetAll(r.Context())
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -50,7 +50,7 @@ func (app *application) testHandler(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 	}
-	if err = app.store.Trials("scienceworld").CreateMany(r.Context(), trials); err != nil {
+	if err = app.Store.Trials("scienceworld").CreateMany(r.Context(), trials); err != nil {
 		log.Println(err.Error())
 	}
 }
