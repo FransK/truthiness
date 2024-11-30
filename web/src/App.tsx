@@ -3,11 +3,11 @@ import { FileUpload } from "./components/FileUpload";
 import { ExperimentList } from "./components/ExperimentList";
 import { VisualizationControls } from "./components/VisualizationControls";
 import { ExperimentChart } from "./components/ExperimentChart";
-import { ExperimentData, ChartConfig } from "./types/experiment";
+import { ChartConfig, IExperiment } from "./types/experiment";
 
 function App() {
   const [selectedExperiment, setSelectedExperiment] =
-    React.useState<ExperimentData | null>(null);
+    React.useState<IExperiment | null>(null);
   const [chartConfig, setChartConfig] = React.useState<ChartConfig>({
     xAxis: "",
     yAxis: "",

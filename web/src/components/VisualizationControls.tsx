@@ -1,8 +1,8 @@
-import { ExperimentData, ChartConfig } from "../types/experiment";
+import { IExperiment, ChartConfig } from "../types/experiment";
 import { determineChartType } from "../utils/chart";
 
 interface Props {
-  experiment: ExperimentData;
+  experiment: IExperiment;
   config: ChartConfig;
   onConfigChange: (config: ChartConfig) => void;
 }
@@ -29,8 +29,8 @@ export function VisualizationControls({
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
         >
           <option value="">Select variable</option>
-          {experiment.variables.map((variable) => (
-            <option key={variable} value={variable}>
+          {experiment.records.map((variable, index) => (
+            <option key={index} value={variable}>
               {variable}
             </option>
           ))}
@@ -47,8 +47,8 @@ export function VisualizationControls({
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
         >
           <option value="">Select variable</option>
-          {experiment.variables.map((variable) => (
-            <option key={variable} value={variable}>
+          {experiment.records.map((variable, index) => (
+            <option key={index} value={variable}>
               {variable}
             </option>
           ))}

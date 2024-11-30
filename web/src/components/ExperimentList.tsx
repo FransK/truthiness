@@ -1,16 +1,40 @@
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../db/db";
-import { ExperimentData } from "../types/experiment";
+import {
+  GetExperimentsResponse,
+  IExperiment,
+  IExperiments,
+} from "../types/experiment";
+import { useEffect, useState } from "react";
 
 interface Props {
-  onSelect: (experiment: ExperimentData) => void;
+  onSelect: (experiment: IExperiment) => void;
   selectedId?: number;
 }
 
 export function ExperimentList({ onSelect, selectedId }: Props) {
-  const experiments = useLiveQuery(() =>
-    db.experiments.orderBy("createdAt").reverse().toArray()
-  );
+  const [experiments, setExperiments] = useState<IExperiments | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+    setExperiments(null);
+    fetch("http://localhost:8080/v1/experiments")
+      .then((response) => response.json())
+      .then((result: GetExperimentsResponse) => {
+        if (!ignore) {
+          const experiments = result.data.map((e, index) => {
+            return {
+              id: index,
+              name: e.Name,
+              records: e.Records,
+            };
+          });
+          setExperiments(experiments);
+        }
+      })
+      .catch((error) => console.error("Error fetching experiments:", error));
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   if (!experiments) return <div>Loading...</div>;
   if (experiments.length === 0) return <div>No experiments uploaded yet</div>;
@@ -32,8 +56,7 @@ export function ExperimentList({ onSelect, selectedId }: Props) {
           >
             <h3 className="font-medium">{experiment.name}</h3>
             <p className="text-sm text-gray-500">
-              {experiment.variables.length} variables • {experiment.data.length}{" "}
-              trials
+              {experiment.records.length} variables • trials
             </p>
           </button>
         ))}
