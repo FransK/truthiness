@@ -1,8 +1,8 @@
 import "./ExperimentViewer.css";
 
 import { useEffect, useState } from "react";
-import MyScatter from "../components/ui/ScatterChart/ScatterChart";
-import MyDropdown from "../components/ui/SearchableDropdown/SearchableDropdown";
+import MyScatter from "../components/ScatterChart/ScatterChart";
+import MyDropdown from "../components/SearchableDropdown/SearchableDropdown";
 
 export default function ExperimentViewer() {
   interface GetExperimentsResponse {
