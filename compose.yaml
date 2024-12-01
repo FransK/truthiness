@@ -1,10 +1,42 @@
 name: truthiness
 
 services:
-  mongodb:
-    image: mongodb/mongodb-community-server
-    environment:
-      - MONGODB_INITDB_ROOT_USERNAME=admin
-      - MONGODB_INITDB_ROOT_PASSWORD=adminpassword
+  docker-truthiness:
+    depends_on:
+      - mongo-truthiness
+    build:
+      context: ./backend
+    container_name: rest-server
+    hostname: rest-server
+    networks:
+      - backend-network
     ports:
-      - "27017:27017"
+      - 8000:8080
+    environment:
+      - STORAGE_TYPE={$STORAGE_TYPE:-MONGODB}
+      - DB_ADDR={$DB_ADDR:?database address string has not been set}
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  mongo-truthiness:
+    image: mongo
+    container_name: mongo-truthiness
+    hostname: db
+    networks:
+      - backend-network
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME={$MONGODB_INITDB_ROOT_USERNAME:?mongodb root user name not set}
+      - MONGODB_INITDB_ROOT_PASSWORD={$MONGODB_INITDB_ROOT_PASSWORD:?mongodb root password not set}
+    ports:
+      - 8080:8080
+      - 27017:27017
+    volumes:
+      - mongovol:/data/db
+
+volumes:
+  mongovol:
+
+networks:
+  backend-network:
+    driver: bridge
