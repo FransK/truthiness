@@ -1,5 +1,4 @@
 import { IExperiment, ChartConfig } from "../types/experiment";
-import { determineChartType } from "../utils/chart";
 
 interface Props {
   experiment: IExperiment;
@@ -13,7 +12,7 @@ export function VisualizationControls({
   onConfigChange,
 }: Props) {
   const handleAxisChange = (axis: "xAxis" | "yAxis", variable: string) => {
-    const chartType = determineChartType(experiment, variable);
+    const chartType = "scatter";
     onConfigChange({ ...config, [axis]: variable, chartType });
   };
 

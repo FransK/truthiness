@@ -1,0 +1,27 @@
+# Stage 1: Build the React app using Vite
+FROM node:23.3 AS build
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Build the production-ready React app using Vite
+RUN npx vite build
+
+# Stage 2: Serve the React app using Nginx
+FROM nginx:alpine AS production
+
+# Copy the built app from the build stage to Nginx's public directory
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose the port that Nginx will serve on
+EXPOSE 80
+
+# Nginx is set up to serve the static files by default, no need to manually configure unless needed.
+CMD ["nginx", "-g", "daemon off;"]

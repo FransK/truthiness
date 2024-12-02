@@ -1,6 +1,19 @@
 name: truthiness
 
 services:
+  react-app:
+    build:
+      context: ./web
+      dockerfile: dockerfile
+      target: production  # Ensure that it uses the production stage of the Dockerfile
+    ports:
+      - "3000:3000"  # Map the React app to port 3000
+    networks:
+      - backend-network
+    depends_on:
+      - docker-truthiness
+      - mongo-truthiness
+
   docker-truthiness:
     depends_on:
       - mongo-truthiness
@@ -36,6 +49,7 @@ services:
 
 volumes:
   mongovol:
+    driver: local
 
 networks:
   backend-network:

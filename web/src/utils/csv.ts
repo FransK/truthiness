@@ -3,10 +3,10 @@ import { ExperimentData } from '../types/experiment';
 
 export const parseCSV = (file: File): Promise<ExperimentData> => {
   return new Promise((resolve, reject) => {
-    Papa.parse(file, {
+    Papa.parse<any, File>(file, {
       header: true,
       dynamicTyping: true,
-      complete: (results) => {
+      complete: (results: Papa.ParseResult<any>) => {
         const variables = Object.keys(results.data[0]);
         resolve({
           name: file.name.replace('.csv', ''),
@@ -15,7 +15,7 @@ export const parseCSV = (file: File): Promise<ExperimentData> => {
           createdAt: new Date()
         });
       },
-      error: (error) => {
+      error: (error: Error) => {
         reject(error);
       }
     });
