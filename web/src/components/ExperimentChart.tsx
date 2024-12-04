@@ -32,7 +32,11 @@ export function ExperimentChart({ experiment, config }: Props) {
 
     let ignore = false;
     setTrials(null);
-    fetch(`http://localhost:8080/v1/experiments/${experiment.name}/trials`)
+    fetch(
+      `${import.meta.env.VITE_REST_ADDR}/v1/experiments/${
+        experiment.name
+      }/trials`
+    )
       .then((response) => response.json())
       .then((result: GetTrialsResponse) => {
         if (!ignore) {

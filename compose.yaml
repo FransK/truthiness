@@ -1,48 +1,48 @@
 name: truthiness
 
 services:
-  react-app:
+  docker-react:
     build:
       context: ./web
       dockerfile: dockerfile
       target: production  # Ensure that it uses the production stage of the Dockerfile
-    ports:
-      - "3000:3000"  # Map the React app to port 3000
-    networks:
-      - backend-network
+    container_name: react-app
+    environment:
+      - VITE_REST_ADDR=http://localhost:8080
     depends_on:
       - docker-truthiness
-      - mongo-truthiness
+      - docker-mongo
+    ports:
+      - "3000:80"  # Map the React app from port 3000 to our nginx server on port 80
 
   docker-truthiness:
-    depends_on:
-      - mongo-truthiness
+    container_name: rest-server
     build:
       context: ./backend
-    container_name: rest-server
+    depends_on:
+      - docker-mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      - STORAGE_TYPE={$STORAGE_TYPE:-MONGODB}
+      - DB_ADDR={$DB_ADDR:-mongodb://mongo-db:27017}
     hostname: rest-server
     networks:
       - backend-network
     ports:
-      - 8000:8080
-    environment:
-      - STORAGE_TYPE={$STORAGE_TYPE:-MONGODB}
-      - DB_ADDR={$DB_ADDR:?database address string has not been set}
-    deploy:
-      restart_policy:
-        condition: on-failure
+      - 8080:8080
 
-  mongo-truthiness:
+  docker-mongo:
+    container_name: mongo-db
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME={$MONGODB_INITDB_ROOT_USERNAME}
+      - MONGODB_INITDB_ROOT_PASSWORD={$MONGODB_INITDB_ROOT_PASSWORD}
+    hostname: mongo-db
     image: mongo
-    container_name: mongo-truthiness
-    hostname: db
     networks:
       - backend-network
-    environment:
-      - MONGODB_INITDB_ROOT_USERNAME={$MONGODB_INITDB_ROOT_USERNAME:?mongodb root user name not set}
-      - MONGODB_INITDB_ROOT_PASSWORD={$MONGODB_INITDB_ROOT_PASSWORD:?mongodb root password not set}
     ports:
-      - 8080:8080
       - 27017:27017
     volumes:
       - mongovol:/data/db

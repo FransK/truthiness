@@ -16,7 +16,7 @@ export function ExperimentList({ onSelect, selectedId }: Props) {
   useEffect(() => {
     let ignore = false;
     setExperiments(null);
-    fetch("http://localhost:8080/v1/experiments")
+    fetch(`${import.meta.env.VITE_REST_ADDR}/v1/experiments`)
       .then((response) => response.json())
       .then((result: GetExperimentsResponse) => {
         if (!ignore) {
