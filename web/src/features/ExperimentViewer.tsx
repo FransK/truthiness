@@ -1,137 +1,72 @@
-import "./ExperimentViewer.css";
+import React from "react";
+import { FileUpload } from "../components/FileUpload";
+import { ExperimentList } from "../components/ExperimentList";
+import { VisualizationControls } from "../components/VisualizationControls";
+import { ExperimentChart } from "../components/ExperimentChart";
+import { ChartConfig, IExperiment } from "../types/experiment";
 
-import { useEffect, useState } from "react";
-import MyScatter from "../components/ui/ScatterChart/ScatterChart";
-import MyDropdown from "../components/ui/SearchableDropdown/SearchableDropdown";
-
-export default function ExperimentViewer() {
-  interface GetExperimentsResponse {
-    data: {
-      Name: string;
-      Date: string;
-      Location: string;
-      Records: string[];
-    }[];
-  }
-
-  interface IExperiment {
-    id: number;
-    name: string;
-    records: string[];
-  }
-
-  type IExperiments = IExperiment[];
-
-  interface GetTrialsResponse {
-    data: {
-      Data: { Key: string; Value: string }[];
-    }[];
-  }
-
-  const [experiments, setExperiments] = useState<IExperiments | null>(null);
-  const [experiment, setExperiment] = useState<IExperiment | null>(null);
-  const [xaxis, setXaxis] = useState<string>("");
-  const [yaxis, setYaxis] = useState<string>("");
-  const [trials, setTrials] = useState<GetTrialsResponse | null>(null);
-
-  function handleSetExperiment(name: string) {
-    setExperiment(
-      experiments ? experiments.find((e) => e.name === name) || null : null
-    );
-  }
-
-  useEffect(() => {
-    let ignore = false;
-    setExperiments(null);
-    fetch("http://localhost:8080/v1/experiments")
-      .then((response) => response.json())
-      .then((result: GetExperimentsResponse) => {
-        if (!ignore) {
-          const experiments = result.data.map((e, index) => {
-            return {
-              id: index,
-              name: e.Name,
-              records: e.Records,
-            };
-          });
-          setExperiments(experiments);
-        }
-      })
-      .catch((error) => console.error("Error fetching experiments:", error));
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!experiment) {
-      return;
-    }
-
-    let ignore = false;
-    setTrials(null);
-    fetch(`http://localhost:8080/v1/experiments/${experiment.name}/trials`)
-      .then((response) => response.json())
-      .then((result: GetTrialsResponse) => {
-        if (!ignore) {
-          console.log(result);
-          setTrials(result);
-        }
-      })
-      .catch((error) => console.error("Error fetching trials:", error));
-    return () => {
-      ignore = true;
-    };
-  }, [experiment]);
+function App() {
+  const [selectedExperiment, setSelectedExperiment] =
+    React.useState<IExperiment | null>(null);
+  const [chartConfig, setChartConfig] = React.useState<ChartConfig>({
+    xAxis: "",
+    yAxis: "",
+    chartType: "scatter",
+  });
 
   return (
-    <div className="experiment-viewer">
-      <div className="experiment">
-        <h2>Select an experiment:</h2>
-        <MyDropdown
-          options={experiments ? experiments.map((e) => e.name) : []}
-          id="experimentname"
-          selectedVal={experiment ? experiment.name : ""}
-          handleChange={(exp: string) => handleSetExperiment(exp)}
-        />
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Experiment Data Visualizer
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-lg font-semibold mb-4">
+                Upload New Experiment
+              </h2>
+              <FileUpload />
+            </div>
+
+            <ExperimentList
+              onSelect={setSelectedExperiment}
+              selectedId={selectedExperiment?.id}
+            />
+          </div>
+
+          <div className="md:col-span-2 space-y-6">
+            {selectedExperiment ? (
+              <>
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <h2 className="text-lg font-semibold mb-4">
+                    {selectedExperiment.name}
+                  </h2>
+                  <VisualizationControls
+                    experiment={selectedExperiment}
+                    config={chartConfig}
+                    onConfigChange={setChartConfig}
+                  />
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <ExperimentChart
+                    experiment={selectedExperiment}
+                    config={chartConfig}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
+                Select an experiment to visualize
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      {experiment ? (
-        <>
-          <div className="experiment">
-            <h2>Select an X-Axis:</h2>
-            <MyDropdown
-              options={experiment !== null ? experiment.records : []}
-              id="x-axis"
-              selectedVal={xaxis}
-              handleChange={(record: string) => setXaxis(record)}
-            />
-          </div>
-          <div className="experiment">
-            <h2>Select a Y-Axis:</h2>
-            <MyDropdown
-              options={experiment !== null ? experiment.records : []}
-              id="y-axis"
-              selectedVal={yaxis}
-              handleChange={(record: string) => setYaxis(record)}
-            />
-          </div>
-        </>
-      ) : null}
-
-      {experiment && xaxis && yaxis ? (
-        <MyScatter
-          data={
-            trials
-              ? trials.data.map((d) => {
-                  return d.Data;
-                })
-              : []
-          }
-          xkey={xaxis}
-          ykey={yaxis}
-        />
-      ) : null}
     </div>
   );
 }
+
+export default App;

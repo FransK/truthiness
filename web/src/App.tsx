@@ -1,12 +1,9 @@
-import "./App.css";
 import ExperimentViewer from "./features/ExperimentViewer";
 
-function App() {
+export default function App() {
   return (
     <>
       <ExperimentViewer />
     </>
   );
 }
-
-export default App;
