@@ -13,7 +13,7 @@ services:
       - docker-truthiness
       - docker-mongo
     ports:
-      - "3000:80"  # Map the React app from port 3000 to our nginx server on port 80
+      - "5173:80"  # Map the React app from port 3000 to our nginx server on port 80
 
   docker-truthiness:
     container_name: rest-server
