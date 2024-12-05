@@ -27,7 +27,7 @@ func New(addr string, maxOpenConns int, maxIdleTime time.Duration) (*mongo.Datab
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		return nil, err
 	}
-	log.Printf("Connected to mongdb server at %v", addr)
+	log.Printf("connected to mongdb server at %v", addr)
 
 	database := client.Database("truthiness")
 

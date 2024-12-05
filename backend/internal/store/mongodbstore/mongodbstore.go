@@ -13,7 +13,7 @@ type MongoDbStore struct {
 }
 
 /* New creates a container for a MongoDB database which can be used for queries */
-func New(mongodb *mongo.Database) store.Storage {
+func New(mongodb *mongo.Database) *MongoDbStore {
 	return &MongoDbStore{
 		db: mongodb,
 	}
