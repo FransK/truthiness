@@ -1,10 +1,62 @@
 package api
 
 import (
+	"context"
+	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/fransk/truthiness/internal/store"
+	"github.com/fransk/truthiness/internal/store/inmemorystore"
 )
+
+func TestNewServer(t *testing.T) {
+	experiment := store.Experiment{
+		Name:     "TestExperiment",
+		Date:     "March 22 2024",
+		Location: "SFU",
+		Records:  []string{"Age", "Difference"},
+	}
+	trial := store.Trial{
+		Data: map[string]string{"Age": "20", "Difference": "0.2"},
+	}
+	store := inmemorystore.New()
+	store.Experiments().Create(context.TODO(), &experiment)
+	store.Trials(experiment.Name).Create(context.TODO(), &trial)
+	cfg := &Config{
+		Addr: "testhost:1111",
+	}
+
+	srv := NewServer(cfg, &store)
+
+	// Verify routes are set correctly
+	testCases := []struct {
+		method string
+		addr   string
+		body   io.Reader
+		want   int
+	}{
+		{http.MethodGet, "/v1/health", nil, http.StatusOK},
+		{http.MethodGet, "/v1/experiments", nil, http.StatusOK},
+		{http.MethodGet, "/v1/experiments/TestExperiment/trials", nil, http.StatusOK},
+		{http.MethodGet, "/v1/experiments/NonexistentExperiment/trials", nil, http.StatusOK},
+		{http.MethodGet, "/v1/upload", nil, http.StatusMethodNotAllowed},
+		{http.MethodPost, "/v1/upload", nil, http.StatusBadRequest},
+		{http.MethodGet, "/", nil, http.StatusNotFound},
+	}
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%s at %s", tc.method, tc.addr), func(t *testing.T) {
+			req := httptest.NewRequest(tc.method, tc.addr, tc.body)
+			rr := httptest.NewRecorder()
+			srv.ServeHTTP(rr, req)
+			if rr.Code != tc.want {
+				t.Errorf("got %v; want %v", rr.Code, tc.want)
+			}
+		})
+	}
+}
 
 func TestEnableCORS(t *testing.T) {
 	app := &Application{}
