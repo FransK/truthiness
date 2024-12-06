@@ -12,7 +12,7 @@ import (
 	"github.com/fransk/truthiness/internal/store/inmemorystore"
 )
 
-func TestNewServer(t *testing.T) {
+func TestRoutes(t *testing.T) {
 	experiment := store.Experiment{
 		Name:     "TestExperiment",
 		Date:     "March 22 2024",
@@ -47,7 +47,9 @@ func TestNewServer(t *testing.T) {
 		{http.MethodGet, "/", nil, http.StatusNotFound},
 	}
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(fmt.Sprintf("%s at %s", tc.method, tc.addr), func(t *testing.T) {
+			t.Parallel()
 			req := httptest.NewRequest(tc.method, tc.addr, tc.body)
 			rr := httptest.NewRecorder()
 			srv.ServeHTTP(rr, req)
