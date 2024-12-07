@@ -1,18 +1,20 @@
-import React from "react";
+import { useState } from "react";
 import { FileUpload } from "../components/FileUpload";
 import { ExperimentList } from "../components/ExperimentList";
 import { VisualizationControls } from "../components/VisualizationControls";
 import { ExperimentChart } from "../components/ExperimentChart";
 import { ChartConfig, IExperiment } from "../types/experiment";
+import { LoginForm } from "../components/LoginForm";
 
 function App() {
   const [selectedExperiment, setSelectedExperiment] =
-    React.useState<IExperiment | null>(null);
-  const [chartConfig, setChartConfig] = React.useState<ChartConfig>({
+    useState<IExperiment | null>(null);
+  const [chartConfig, setChartConfig] = useState<ChartConfig>({
     xAxis: "",
     yAxis: "",
     chartType: "scatter",
   });
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -27,7 +29,7 @@ function App() {
               <h2 className="text-lg font-semibold mb-4">
                 Upload New Experiment
               </h2>
-              <FileUpload />
+              {loggedIn ? <FileUpload /> : <LoginForm />}
             </div>
 
             <ExperimentList
