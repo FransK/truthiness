@@ -46,8 +46,8 @@ func TestRoutes(t *testing.T) {
 		{http.MethodGet, "/v1/experiments/TestExperiment/trials", nil, http.StatusOK},
 		{http.MethodGet, "/v1/experiments/NonexistentExperiment/trials", nil, http.StatusOK},
 		{http.MethodGet, "/v1/health", nil, http.StatusOK},
-		{http.MethodGet, "/v1/upload", nil, http.StatusMethodNotAllowed},
-		{http.MethodPost, "/v1/upload", nil, http.StatusBadRequest},
+		{http.MethodGet, "/v1/upload", nil, http.StatusUnauthorized},
+		{http.MethodPost, "/v1/upload", nil, http.StatusUnauthorized},
 		{http.MethodGet, "/", nil, http.StatusNotFound},
 	}
 	for _, tc := range testCases {
@@ -85,7 +85,7 @@ func TestEnableCORS(t *testing.T) {
 	rr = httptest.NewRecorder()
 	handler.ServeHTTP(rr, req)
 
-	if rr.Code != http.StatusOK {
+	if rr.Code != http.StatusNoContent {
 		t.Errorf("Preflight OPTIONS returned status %v; want %v", rr.Code, http.StatusOK)
 	}
 }
