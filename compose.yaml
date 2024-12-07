@@ -25,8 +25,8 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      - STORAGE_TYPE={$STORAGE_TYPE:-MONGODB}
-      - DB_ADDR={$DB_ADDR:-mongodb://mongo-db:27017}
+      - STORAGE_TYPE=${STORAGE_TYPE:-MONGODB}
+      - DB_ADDR=mongodb://mongo-db:27017
     hostname: rest-server
     networks:
       - backend-network
@@ -36,8 +36,8 @@ services:
   docker-mongo:
     container_name: mongo-db
     environment:
-      - MONGODB_INITDB_ROOT_USERNAME={$MONGODB_INITDB_ROOT_USERNAME}
-      - MONGODB_INITDB_ROOT_PASSWORD={$MONGODB_INITDB_ROOT_PASSWORD}
+      - MONGODB_INITDB_ROOT_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
+      - MONGODB_INITDB_ROOT_PASSWORD=${MONGODB_INITDB_ROOT_PASSWORD}
     hostname: mongo-db
     image: mongo
     networks:
