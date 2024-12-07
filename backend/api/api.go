@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/fransk/truthiness/internal/auth"
@@ -32,13 +33,14 @@ func NewServer(config *Config, store *store.Storage) http.Handler {
 func (app *Application) enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Allow specific origin
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")   // Allow specific HTTP methods
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")         // Allow specific headers
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")        // Allow specific origin
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")          // Allow specific HTTP methods
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization") // Allow specific headers
+		w.Header().Set("Access-Control-Allow-Credentials", "true")                    // Allow cookies/credentials
 
 		// Handle preflight requests
 		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 
@@ -50,10 +52,17 @@ func (app *Application) enableCORS(next http.Handler) http.Handler {
 // JWT Authorization middleware
 func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Skip preflight requests
+		if r.Method == http.MethodOptions {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// check to see if this path requires authentication
-		// TODO store this somewhere more sensible
+		log.Printf("checking auth headers. URL: %v", r.URL)
+
 		pathRoles := map[string][]string{
-			"/upload": {"admin"},
+			"/v1/upload": {"admin"},
 		}
 
 		allowedRoles, ok := pathRoles[r.URL.Path]
@@ -71,7 +80,9 @@ func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 			return
 		}
 
-		// if user role not in allowed list, don't serve
+		log.Printf("token validated. user role: %s", userRole)
+
+		// check if the user role is in the allowed list
 		for _, role := range allowedRoles {
 			if userRole == role {
 				next.ServeHTTP(w, r)

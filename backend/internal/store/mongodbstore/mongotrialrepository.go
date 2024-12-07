@@ -35,7 +35,7 @@ func (repo *MongoTrialRepository) CreateMany(ctx context.Context, trials []store
 		return err
 	}
 
-	log.Printf("Inserted new trials with IDs %v\n", result.InsertedIDs)
+	log.Printf("successfully inserted %v new trials\n", len(result.InsertedIDs))
 
 	return nil
 }

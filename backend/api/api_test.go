@@ -99,7 +99,7 @@ func TestCheckAuthHeaders(t *testing.T) {
 
 	// Test no authentication headers on protected area
 	t.Run("protected-notoken", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/upload", nil)
+		req := httptest.NewRequest(http.MethodPost, "/v1/upload", nil)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
@@ -116,7 +116,7 @@ func TestCheckAuthHeaders(t *testing.T) {
 			t.Errorf("failed to create token")
 		}
 
-		req := httptest.NewRequest(http.MethodPost, "/upload", nil)
+		req := httptest.NewRequest(http.MethodPost, "/v1/upload", nil)
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tokenStr))
 		rr := httptest.NewRecorder()
 
@@ -135,7 +135,7 @@ func TestCheckAuthHeaders(t *testing.T) {
 			t.Errorf("failed to create token")
 		}
 
-		req := httptest.NewRequest(http.MethodPost, "/upload", nil)
+		req := httptest.NewRequest(http.MethodPost, "/v1/upload", nil)
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tokenStr))
 		rr := httptest.NewRecorder()
 
@@ -149,7 +149,7 @@ func TestCheckAuthHeaders(t *testing.T) {
 
 	// Test authentication headers on unprotected area
 	t.Run("unprotected", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/health", nil)
+		req := httptest.NewRequest(http.MethodGet, "/v1/health", nil)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 

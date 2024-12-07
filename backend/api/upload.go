@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"encoding/csv"
 	"log"
 	"net/http"
@@ -11,29 +10,29 @@ import (
 )
 
 func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Upload Data invoked.")
+	log.Println("upload Data invoked.")
 
 	experimentname := r.FormValue("experiment")
 	if experimentname == "" {
-		http.Error(w, "No experiment name provided", http.StatusBadRequest)
+		http.Error(w, "no experiment name provided", http.StatusBadRequest)
 		return
 	}
 	experimentdate := r.FormValue("date")
 	if experimentdate == "" {
-		http.Error(w, "No experiment date provided", http.StatusBadRequest)
+		http.Error(w, "no experiment date provided", http.StatusBadRequest)
 		return
 	}
 	experimentlocation := r.FormValue("location")
 	if experimentlocation == "" {
-		http.Error(w, "No experiment location provided", http.StatusBadRequest)
+		http.Error(w, "no experiment location provided", http.StatusBadRequest)
 		return
 	}
-	log.Printf("Experiment: %v - %v at %v", experimentname, experimentdate, experimentlocation)
+	log.Printf("experiment: %v - %v at %v", experimentname, experimentdate, experimentlocation)
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "Unable to read file", http.StatusBadRequest)
-		log.Printf("Error reading file: %v", err)
+		http.Error(w, "unable to read file", http.StatusBadRequest)
+		log.Printf("error reading file: %v", err)
 		return
 	}
 	defer file.Close()
@@ -41,8 +40,8 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	reader := csv.NewReader(file)
 	rows, err := reader.ReadAll()
 	if err != nil {
-		http.Error(w, "Unable to parse CSV", http.StatusBadRequest)
-		log.Printf("Error parsing CSV: %v", err)
+		http.Error(w, "unable to parse CSV", http.StatusBadRequest)
+		log.Printf("error parsing CSV: %v", err)
 		return
 	}
 
@@ -66,8 +65,6 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 			}
 		}
 
-		log.Println(data)
-
 		trials = append(trials, store.Trial{
 			Data: data,
 		})
@@ -75,8 +72,8 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 
 	experiment := store.Experiment{
 		Name:     experimentname,
-		Date:     "November 10 1993",
-		Location: "sfu",
+		Date:     experimentdate,
+		Location: experimentlocation,
 		Records:  slices.Clone(keys),
 	}
 
@@ -93,5 +90,7 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 
 		return "success", nil
 	}
-	app.Store.WithTransaction(context.TODO(), fn)
+	app.Store.WithTransaction(r.Context(), fn)
+
+	app.jsonResponse(w, http.StatusOK, "success")
 }

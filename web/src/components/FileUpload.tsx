@@ -18,6 +18,7 @@ export function FileUpload() {
       return;
     }
 
+    const token = localStorage.getItem("token");
     const formData = new FormData(e.currentTarget);
     setIsUploading(true);
 
@@ -26,6 +27,9 @@ export function FileUpload() {
         `${import.meta.env.VITE_REST_ADDR}/v1/upload`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           body: formData,
         }
       );

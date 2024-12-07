@@ -35,7 +35,6 @@ export function LoginForm({ onLogin }: Props) {
 
       localStorage.setItem("token", result); // Save token
       onLogin(username);
-      alert("Login successful! " + result);
     } catch (err) {
       setError("Error logging in:");
       onLogin("");
