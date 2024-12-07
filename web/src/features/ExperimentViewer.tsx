@@ -6,7 +6,12 @@ import { ExperimentChart } from "../components/ExperimentChart";
 import { ChartConfig, IExperiment } from "../types/experiment";
 import { LoginForm } from "../components/LoginForm";
 
-function App() {
+interface Props {
+  onLogin: (username: string) => void;
+  isLoggedIn: boolean;
+}
+
+export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
   const [selectedExperiment, setSelectedExperiment] =
     useState<IExperiment | null>(null);
   const [chartConfig, setChartConfig] = useState<ChartConfig>({
@@ -14,7 +19,6 @@ function App() {
     yAxis: "",
     chartType: "scatter",
   });
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -29,7 +33,7 @@ function App() {
               <h2 className="text-lg font-semibold mb-4">
                 Upload New Experiment
               </h2>
-              {loggedIn ? <FileUpload /> : <LoginForm />}
+              {isLoggedIn ? <FileUpload /> : <LoginForm onLogin={onLogin} />}
             </div>
 
             <ExperimentList
@@ -70,5 +74,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

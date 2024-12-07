@@ -1,26 +1,44 @@
 import { useState } from "react";
-import axios from "axios";
 
-export function LoginForm() {
+interface Props {
+  onLogin: (username: string) => void;
+}
+
+export function LoginForm({ onLogin }: Props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setError("");
+
     try {
-      setError("");
-      const response = await axios.post(
+      const response = await fetch(
         `${import.meta.env.VITE_REST_ADDR}/v1/authenticate`,
         {
-          username,
-          password,
+          method: "POST",
+          body: JSON.stringify({
+            username: username,
+            password: password,
+          }),
         }
       );
-      localStorage.setItem("token", response.data); // Save token
-      alert("Login successful!");
+      if (!response.ok) {
+        setError("Error: " + response.statusText);
+        onLogin("");
+        return;
+      }
+
+      const result = await response.text();
+
+      localStorage.setItem("token", result); // Save token
+      onLogin(username);
+      alert("Login successful! " + result);
     } catch (err) {
-      setError("Invalid credentials");
+      setError("Error logging in:");
+      onLogin("");
     }
   };
 
