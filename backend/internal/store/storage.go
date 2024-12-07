@@ -45,10 +45,16 @@ type TrialRepository interface {
 
 // User needs to have an identifier
 type User struct {
-	ID int64 `bson:"_id"`
+	ID          int64  `bson:"_id"`
+	Username    string `bson:"username"`
+	Password    string
+	Role        string
+	Permissions []string
 }
 
 type UserRepository interface {
 	Create(ctx context.Context, user *User) error
+	GetAll(ctx context.Context) ([]User, error)
 	GetById(ctx context.Context, id int64) (*User, error)
+	GetByUsername(ctx context.Context, username string) (*User, error)
 }

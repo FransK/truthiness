@@ -16,3 +16,15 @@ func (app *Application) internalServerError(w http.ResponseWriter, r *http.Reque
 
 	writeJSONError(w, http.StatusInternalServerError, "the server encountered a problem")
 }
+
+func (app *Application) methodNotAllowedResponse(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("method not allowed.\nmethod %v\npath %v\nerror %v", r.Method, r.URL.Path, err.Error())
+
+	writeJSONError(w, http.StatusMethodNotAllowed, err.Error())
+}
+
+func (app *Application) unauthorized(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("unauthorized.\nmethod %v\npath %v\nerror %v", r.Method, r.URL.Path, err.Error())
+
+	writeJSONError(w, http.StatusUnauthorized, "unauthorized")
+}

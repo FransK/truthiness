@@ -13,9 +13,33 @@ type MongoUserRepository struct {
 	collection *mongo.Collection
 }
 
+func (repo *MongoUserRepository) GetAll(ctx context.Context) ([]store.User, error) {
+	cursor, err := repo.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var users []store.User
+	if err = cursor.All(ctx, &users); err != nil {
+		log.Fatal(err)
+	}
+
+	return users, nil
+}
+
 func (repo *MongoUserRepository) GetById(ctx context.Context, id int64) (*store.User, error) {
 	var result store.User
 	if err := repo.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (repo *MongoUserRepository) GetByUsername(ctx context.Context, username string) (*store.User, error) {
+	var result store.User
+	if err := repo.collection.FindOne(ctx, bson.M{"username": username}).Decode(&result); err != nil {
 		return nil, err
 	}
 
