@@ -35,6 +35,18 @@ export function FileUpload() {
           body: formData,
         }
       );
+      if (!response.ok) {
+        if (response.status == 401) {
+          setError("Authorization failed. Please check your credentials.");
+        } else if (response.status == 403) {
+          setError("Could not upload. Insufficient permissions.");
+        } else {
+          setError(`Error: ${response.status} - ${response.statusText}`);
+          throw new Error(error);
+        }
+        return;
+      }
+
       const result = await response.json();
       console.log("Upload successful:", result);
     } catch (err) {

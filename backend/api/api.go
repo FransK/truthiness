@@ -23,20 +23,20 @@ func NewServer(config *Config, store *store.Storage) http.Handler {
 
 	// middleware
 	var handler http.Handler = mux
-	handler = app.enableCORS(handler)
 	handler = app.checkAuthHeaders(handler)
+	handler = app.enableCORS(handler)
 
 	return handler
 }
 
-// Middleware to handle CORS
+// MIDDLEWARE: Add CORS headers to all requests.
+// Make sure requests pass through this first.
 func (app *Application) enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Set CORS headers
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")        // Allow specific origin
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")          // Allow specific HTTP methods
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization") // Allow specific headers
-		w.Header().Set("Access-Control-Allow-Credentials", "true")                    // Allow cookies/credentials
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		// Handle preflight requests
 		if r.Method == http.MethodOptions {
@@ -44,12 +44,12 @@ func (app *Application) enableCORS(next http.Handler) http.Handler {
 			return
 		}
 
-		// Call the next handler
 		next.ServeHTTP(w, r)
 	})
 }
 
-// JWT Authorization middleware
+// MIDDLEWARE: JWT Authorization
+// Checks against a list of restricted paths and prevents unauthorized access
 func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip preflight requests
@@ -73,8 +73,6 @@ func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 
 		// get the user role from token
 		userRole, err := auth.ValidateTokenAndGetRole(r)
-
-		// if error, don't serve
 		if err != nil {
 			app.unauthorized(w, r, err)
 			return
@@ -89,6 +87,6 @@ func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 				return
 			}
 		}
-		app.unauthorized(w, r, errors.New(fmt.Sprintf("role have: %s, role want: %v", userRole, allowedRoles)))
+		app.forbidden(w, r, errors.New(fmt.Sprintf("role have: %s, role want: %v", userRole, allowedRoles)))
 	})
 }
