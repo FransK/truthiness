@@ -1,9 +1,4 @@
-import {
-  GetExperimentsResponse,
-  IExperiment,
-  IExperiments,
-} from "../types/experiment";
-import { useEffect, useState } from "react";
+import { IExperiment, IExperiments } from "../types/experiment";
 
 interface Props {
   experiments: IExperiments | null;
