@@ -47,9 +47,9 @@ func (repo *MongoTrialRepository) GetAll(ctx context.Context) ([]store.Trial, er
 	}
 	defer cursor.Close(ctx)
 
-	var trials []store.Trial
+	trials := make([]store.Trial, 0)
 	if err = cursor.All(ctx, &trials); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return trials, nil

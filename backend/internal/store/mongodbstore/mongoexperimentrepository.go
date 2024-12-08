@@ -31,9 +31,9 @@ func (repo *MongoExperimentRepository) GetAll(ctx context.Context) ([]store.Expe
 	}
 	defer cursor.Close(ctx)
 
-	var experiments []store.Experiment
+	experiments := make([]store.Experiment, 0)
 	if err = cursor.All(ctx, &experiments); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return experiments, nil

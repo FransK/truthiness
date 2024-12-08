@@ -20,9 +20,9 @@ func (repo *MongoUserRepository) GetAll(ctx context.Context) ([]store.User, erro
 	}
 	defer cursor.Close(ctx)
 
-	var users []store.User
+	users := make([]store.User, 0)
 	if err = cursor.All(ctx, &users); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return users, nil
