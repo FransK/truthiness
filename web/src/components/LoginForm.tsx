@@ -43,7 +43,6 @@ export function LoginForm({ onLogin }: Props) {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-md font-semibold mb-4">Login</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleLogin}>
         <div className="my-4">

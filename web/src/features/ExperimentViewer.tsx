@@ -29,12 +29,21 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-8">
-            <div>
-              <h2 className="text-lg font-semibold mb-4">
-                Upload New Experiment
-              </h2>
-              {isLoggedIn ? <FileUpload /> : <LoginForm onLogin={onLogin} />}
-            </div>
+            {isLoggedIn ? (
+              <div>
+                <h2 className="text-lg font-semibold mb-4">
+                  Upload New Experiment
+                </h2>
+                <FileUpload />{" "}
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-lg font-semibold mb-4">
+                  Login to upload a new experiment
+                </h2>
+                <LoginForm onLogin={onLogin} />
+              </div>
+            )}
 
             <ExperimentList
               onSelect={setSelectedExperiment}
