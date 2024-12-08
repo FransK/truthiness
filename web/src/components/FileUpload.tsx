@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
 
-export function FileUpload() {
+interface Props {
+  onUploadSuccess: () => void;
+}
+
+export function FileUpload({ onUploadSuccess }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState("");
 
   const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    setFile(selectedFile || null);
+    setFile(event.target.files?.[0] || null);
   };
 
   const handleUploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
+    // Get the form element before React clears the event object
+    const form = e.currentTarget;
+
     if (!file) {
-      setError("No file selected");
+      setError("No file selected.");
       return;
     }
 
     const token = localStorage.getItem("token");
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     setIsUploading(true);
 
     try {
@@ -35,6 +41,7 @@ export function FileUpload() {
           body: formData,
         }
       );
+
       if (!response.ok) {
         if (response.status == 401) {
           setError("Authorization failed. Please check your credentials.");
@@ -42,15 +49,19 @@ export function FileUpload() {
           setError("Could not upload. Insufficient permissions.");
         } else {
           setError(`Error: ${response.status} - ${response.statusText}`);
-          throw new Error(error);
         }
         return;
       }
 
       const result = await response.json();
       console.log("Upload successful:", result);
+
+      setFile(null);
+      form.reset();
+      onUploadSuccess();
     } catch (err) {
       console.error("Error uploading file:", err);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -89,42 +100,20 @@ export function FileUpload() {
         </label>
 
         {/* Additional Form Inputs */}
-        <div className="my-4">
-          <label className="block mb-1" htmlFor="experiment">
-            Experiment name:
-          </label>
-          <input
-            type="text"
-            id="experiment"
-            name="experiment"
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="my-4">
-          <label className="block mb-1" htmlFor="date">
-            Experiment date:
-          </label>
-          <input
-            type="text"
-            id="date"
-            name="date"
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="my-4">
-          <label className="block mb-1" htmlFor="location">
-            Experiment location:
-          </label>
-          <input
-            type="text"
-            id="location"
-            name="location"
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+        {["experiment", "date", "location"].map((field) => (
+          <div className="my-4" key={field}>
+            <label className="block mb-1 capitalize" htmlFor={field}>
+              {field.replace("_", " ")}:
+            </label>
+            <input
+              type="text"
+              id={field}
+              name={field}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+        ))}
 
         {/* Submit Button */}
         <button

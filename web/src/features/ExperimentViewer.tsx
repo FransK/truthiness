@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileUpload } from "../components/FileUpload";
 import { ExperimentList } from "../components/ExperimentList";
 import { VisualizationControls } from "../components/VisualizationControls";
 import { ExperimentChart } from "../components/ExperimentChart";
-import { ChartConfig, IExperiment } from "../types/experiment";
+import {
+  ChartConfig,
+  GetExperimentsResponse,
+  IExperiment,
+  IExperiments,
+} from "../types/experiment";
 import { LoginForm } from "../components/LoginForm";
 
 interface Props {
@@ -19,6 +24,37 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
     yAxis: "",
     chartType: "scatter",
   });
+  const [experiments, setExperiments] = useState<IExperiments | null>(null);
+
+  function fetchExperiments() {
+    let ignore = false;
+    fetch(`${import.meta.env.VITE_REST_ADDR}/v1/experiments`)
+      .then((response) => response.json())
+      .then((result: GetExperimentsResponse) => {
+        if (!ignore) {
+          const experiments = result.data.map((e, index) => {
+            return {
+              id: index,
+              name: e.Name,
+              records: e.Records,
+            };
+          });
+          setExperiments(experiments);
+        }
+      })
+      .catch((error) => console.error("Error fetching experiments:", error));
+    return () => {
+      ignore = true;
+    };
+  }
+
+  useEffect(() => {
+    fetchExperiments();
+  }, []);
+
+  const handleUploadSuccess = () => {
+    fetchExperiments();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -34,7 +70,7 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
                 <h2 className="text-lg font-semibold mb-4">
                   Upload New Experiment
                 </h2>
-                <FileUpload />{" "}
+                <FileUpload onUploadSuccess={handleUploadSuccess} />
               </div>
             ) : (
               <div>
@@ -46,6 +82,7 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
             )}
 
             <ExperimentList
+              experiments={experiments}
               onSelect={setSelectedExperiment}
               selectedId={selectedExperiment?.id}
             />

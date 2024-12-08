@@ -6,36 +6,12 @@ import {
 import { useEffect, useState } from "react";
 
 interface Props {
+  experiments: IExperiments | null;
   onSelect: (experiment: IExperiment) => void;
   selectedId?: number;
 }
 
-export function ExperimentList({ onSelect, selectedId }: Props) {
-  const [experiments, setExperiments] = useState<IExperiments | null>(null);
-
-  useEffect(() => {
-    let ignore = false;
-    setExperiments(null);
-    fetch(`${import.meta.env.VITE_REST_ADDR}/v1/experiments`)
-      .then((response) => response.json())
-      .then((result: GetExperimentsResponse) => {
-        if (!ignore) {
-          const experiments = result.data.map((e, index) => {
-            return {
-              id: index,
-              name: e.Name,
-              records: e.Records,
-            };
-          });
-          setExperiments(experiments);
-        }
-      })
-      .catch((error) => console.error("Error fetching experiments:", error));
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
+export function ExperimentList({ experiments, onSelect, selectedId }: Props) {
   if (!experiments) return <div>Loading...</div>;
   if (experiments.length === 0) return <div>No experiments uploaded yet</div>;
 
