@@ -26,7 +26,11 @@ export function LoginForm({ onLogin }: Props) {
         }
       );
       if (!response.ok) {
-        setError("Error: " + response.statusText);
+        if (response.status == 401) {
+          setError("Invalid username/password combination");
+        } else {
+          setError("Error: " + response.statusText);
+        }
         onLogin("");
         return;
       }
@@ -36,7 +40,7 @@ export function LoginForm({ onLogin }: Props) {
       localStorage.setItem("token", result); // Save token
       onLogin(username);
     } catch (err) {
-      setError("Error logging in:");
+      console.error("Error logging in: ", err);
       onLogin("");
     }
   };
@@ -57,6 +61,7 @@ export function LoginForm({ onLogin }: Props) {
             className="w-full p-2 border rounded"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
         <div className="my-4">
@@ -71,6 +76,7 @@ export function LoginForm({ onLogin }: Props) {
             className="w-full p-2 border rounded"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
         <button

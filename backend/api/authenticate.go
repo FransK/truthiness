@@ -26,7 +26,7 @@ func (app *Application) authHandler(w http.ResponseWriter, r *http.Request) {
 	// get user from data store
 	user, err := app.Store.Users().GetByUsername(r.Context(), creds.Username)
 	if err != nil {
-		app.internalServerError(w, r, err)
+		app.unauthorized(w, r, err)
 		return
 	}
 
