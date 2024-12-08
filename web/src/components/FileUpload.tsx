@@ -4,6 +4,7 @@ import { Upload } from "lucide-react";
 export function FileUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
 
   const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -11,10 +12,11 @@ export function FileUpload() {
   };
 
   const handleUploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
+    setError("");
 
     if (!file) {
-      console.error("No file selected");
+      setError("No file selected");
       return;
     }
 
@@ -35,8 +37,8 @@ export function FileUpload() {
       );
       const result = await response.json();
       console.log("Upload successful:", result);
-    } catch (error) {
-      console.error("Error uploading file:", error);
+    } catch (err) {
+      console.error("Error uploading file:", err);
     } finally {
       setIsUploading(false);
     }
@@ -44,6 +46,7 @@ export function FileUpload() {
 
   return (
     <div className="w-full max-w-md">
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleUploadFile}>
         {/* File Upload Input */}
         <label
@@ -83,6 +86,7 @@ export function FileUpload() {
             id="experiment"
             name="experiment"
             className="w-full p-2 border rounded"
+            required
           />
         </div>
         <div className="my-4">
@@ -94,6 +98,7 @@ export function FileUpload() {
             id="date"
             name="date"
             className="w-full p-2 border rounded"
+            required
           />
         </div>
         <div className="my-4">
@@ -105,6 +110,7 @@ export function FileUpload() {
             id="location"
             name="location"
             className="w-full p-2 border rounded"
+            required
           />
         </div>
 
