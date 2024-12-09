@@ -12,8 +12,13 @@ export function VisualizationControls({
   onConfigChange,
 }: Props) {
   const handleAxisChange = (axis: "xAxis" | "yAxis", variable: string) => {
-    const chartType = "scatter";
-    onConfigChange({ ...config, [axis]: variable, chartType });
+    if (axis === "xAxis" && experiment.records.get(variable) == 2) {
+      const chartType = "bar";
+      onConfigChange({ ...config, [axis]: variable, chartType });
+    } else {
+      const chartType = "scatter";
+      onConfigChange({ ...config, [axis]: variable, chartType });
+    }
   };
 
   return (

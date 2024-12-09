@@ -90,10 +90,10 @@ export function ExperimentChart({ experiment, config }: Props) {
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="x" />
+            <XAxis dataKey={xAxis} />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="y" fill="#8884d8" />
+            <Bar dataKey={yAxis} fill="#8884d8" />
           </BarChart>
         )}
       </ResponsiveContainer>
