@@ -122,9 +122,9 @@ func TestCheckAuthHeaders(t *testing.T) {
 
 		handler.ServeHTTP(rr, req)
 
-		dontwant := http.StatusUnauthorized
-		if got := rr.Code; got == dontwant {
-			t.Errorf("got %v; don't want %v", got, dontwant)
+		want := http.StatusOK
+		if got := rr.Code; got != want {
+			t.Errorf("got %v; want %v", got, want)
 		}
 	})
 
@@ -141,9 +141,9 @@ func TestCheckAuthHeaders(t *testing.T) {
 
 		handler.ServeHTTP(rr, req)
 
-		want := http.StatusUnauthorized
+		want := http.StatusForbidden
 		if got := rr.Code; got != want {
-			t.Errorf("got %v; don't want %v", got, want)
+			t.Errorf("got %v; want %v", got, want)
 		}
 	})
 
