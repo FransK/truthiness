@@ -28,9 +28,9 @@ export function VisualizationControls({
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
         >
           <option value="">Select variable</option>
-          {experiment.records.map((variable, index) => (
-            <option key={index} value={variable}>
-              {variable}
+          {[...experiment.records.entries()].map(([key, value], index) => (
+            <option key={index} value={key}>
+              {key}
             </option>
           ))}
         </select>
@@ -46,9 +46,9 @@ export function VisualizationControls({
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
         >
           <option value="">Select variable</option>
-          {experiment.records.map((variable, index) => (
-            <option key={index} value={variable}>
-              {variable}
+          {[...experiment.records.entries()].map(([key, value], index) => (
+            <option key={index} value={key}>
+              {key}
             </option>
           ))}
         </select>

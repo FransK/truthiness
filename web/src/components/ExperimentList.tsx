@@ -27,7 +27,7 @@ export function ExperimentList({ experiments, onSelect, selectedId }: Props) {
           >
             <h3 className="font-medium">{experiment.name}</h3>
             <p className="text-sm text-gray-500">
-              {experiment.records.length} variables • trials
+              {experiment.records.size} variables • trials
             </p>
           </button>
         ))}

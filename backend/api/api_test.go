@@ -18,10 +18,10 @@ func TestRoutes(t *testing.T) {
 		Name:     "TestExperiment",
 		Date:     "March 22 2024",
 		Location: "SFU",
-		Records:  []string{"Age", "Difference"},
+		Records:  map[string]int{"Age": store.DataTypeNumeric, "Difference": store.DataTypeNumeric},
 	}
 	trial := store.Trial{
-		Data: map[string]string{"Age": "20", "Difference": "0.2"},
+		Data: map[string]any{"Age": 20, "Difference": 0.2},
 	}
 	var storage store.Storage
 	storage = inmemorystore.New()

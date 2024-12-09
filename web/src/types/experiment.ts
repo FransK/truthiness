@@ -19,20 +19,20 @@ export interface ExperimentData {
       Name: string;
       Date: string;
       Location: string;
-      Records: string[];
+      Records: Map<string, number>;
     }[];
   }
 
   export interface IExperiment {
     id: number;
     name: string;
-    records: string[];
+    records: Map<string, number>;
   }
 
   export type IExperiments = IExperiment[];
 
   export interface GetTrialsResponse {
     data: {
-      Data: { Key: string; Value: string }[];
+      Data: { Key: string; Value: any }[];
     }[];
   }

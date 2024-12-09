@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"log"
 	"net/http"
-	"slices"
+	"strconv"
 
 	"github.com/fransk/truthiness/internal/store"
 )
@@ -52,15 +52,27 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	keys := make([]string, 0, len(rows[0]))
 	keys = append(keys, rows[0]...)
 
+	// Create a records slice that will also hold the data type of the column
+	records := make(map[string]int, 0)
+
 	trials := make([]store.Trial, 0, len(rows))
 	for _, row := range rows[1:] {
-		data := make(map[string]string)
+		data := make(map[string]any)
 		i := 0
 		for _, key := range keys {
 			if i >= len(row) {
 				data[key] = ""
 			} else {
-				data[key] = row[i]
+				var datatype int
+				numeric, err := strconv.ParseFloat(row[i], 64)
+				if err != nil {
+					datatype = store.DataTypeCategorical
+					data[key] = row[i]
+				} else {
+					datatype = store.DataTypeNumeric
+					data[key] = numeric
+				}
+				records[key] = datatype
 				i++
 			}
 		}
@@ -74,7 +86,7 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 		Name:     experimentname,
 		Date:     experimentdate,
 		Location: experimentlocation,
-		Records:  slices.Clone(keys),
+		Records:  records,
 	}
 
 	fn := func() (interface{}, error) {

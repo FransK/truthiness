@@ -19,7 +19,7 @@ type Experiment struct {
 	Name     string
 	Date     string
 	Location string
-	Records  []string
+	Records  map[string]int
 }
 
 // ExperimentRepository contains a list of all the
@@ -29,10 +29,23 @@ type ExperimentRepository interface {
 	GetAll(ctx context.Context) ([]Experiment, error)
 }
 
+// For use in defining the data type of a record
+const (
+	DataTypeNumeric     = 1
+	DataTypeCategorical = 2
+)
+
+// Record defines a column in the trials data
+// DataType should be "numeric" or "categorical"
+type Record struct {
+	Name     string
+	DataType int
+}
+
 // Trial has an unknown number of columns which represent
 // the data from a single participant in an experiment
 type Trial struct {
-	Data map[string]string
+	Data map[string]any
 }
 
 // TrialRepository represents all the trials in a single
