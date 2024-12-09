@@ -90,7 +90,10 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 
 		return "success", nil
 	}
-	app.Store.WithTransaction(r.Context(), fn)
-
-	app.jsonResponse(w, http.StatusOK, "success")
+	_, err = app.Store.WithTransaction(r.Context(), fn)
+	if err != nil {
+		app.internalServerError(w, r, err)
+	} else {
+		app.jsonResponse(w, http.StatusOK, "success")
+	}
 }
