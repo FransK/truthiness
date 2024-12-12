@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/fransk/truthiness/api"
@@ -25,7 +26,7 @@ type DbConfig struct {
 }
 
 func run(ctx context.Context) error {
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	var store store.Storage
@@ -44,13 +45,18 @@ func run(ctx context.Context) error {
 			dbConfig.MaxIdleTime,
 		)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error connecting to mongo database: %s\n", err)
+			fmt.Fprintf(os.Stderr, "connection error: %s\n", err)
+			return err
 		}
-		defer db.Close(mydb)
 
+		defer db.Close(mydb)
 		store = mongodbstore.New(mydb)
 	default:
 		store = inmemorystore.New()
+	}
+
+	if store == nil {
+		return fmt.Errorf("failed to initialize storage: invalid storage type")
 	}
 
 	log.Printf("storage type: %T", store)
@@ -73,6 +79,8 @@ func run(ctx context.Context) error {
 			fmt.Fprintf(os.Stderr, "error listening and serving: %s\n", err)
 		}
 	}()
+
+	// Wait until context is canceled or timed out then shutdown server
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -86,6 +94,8 @@ func run(ctx context.Context) error {
 		}
 	}()
 	wg.Wait()
+
+	log.Println("server shutdown completed")
 	return nil
 }
 

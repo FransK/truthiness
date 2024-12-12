@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -87,6 +86,6 @@ func (app *Application) checkAuthHeaders(next http.Handler) http.Handler {
 				return
 			}
 		}
-		app.forbidden(w, r, errors.New(fmt.Sprintf("role have: %s, role want: %v", userRole, allowedRoles)))
+		app.forbidden(w, r, fmt.Errorf("role have: %s, role want: %v", userRole, allowedRoles))
 	})
 }

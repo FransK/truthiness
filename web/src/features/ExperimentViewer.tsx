@@ -62,60 +62,65 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Experiment Data Visualizer
         </h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="space-y-8">
-            {isLoggedIn ? (
-              <div>
-                <h2 className="text-lg font-semibold mb-4">
-                  Upload New Experiment
-                </h2>
-                <FileUpload onUploadSuccess={handleUploadSuccess} />
-              </div>
-            ) : (
-              <div>
-                <h2 className="text-lg font-semibold mb-4">
-                  Login to upload a new experiment
-                </h2>
-                <LoginForm onLogin={onLogin} />
-              </div>
-            )}
-
-            <ExperimentList
-              experiments={experiments}
-              onSelect={setSelectedExperiment}
-              selectedId={selectedExperiment?.id}
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-6">
-            {selectedExperiment ? (
-              <>
-                <div className="bg-white p-6 rounded-lg shadow-sm">
+        {!experiments ? (
+          <div>
+            Uh oh! Something's gone wrong... hang tight we're working on it
+            </div>
+            ):(
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-8">
+              {isLoggedIn ? (
+                <div>
                   <h2 className="text-lg font-semibold mb-4">
-                    {selectedExperiment.name}
+                    Upload New Experiment
                   </h2>
-                  <VisualizationControls
-                    experiment={selectedExperiment}
-                    config={chartConfig}
-                    onConfigChange={setChartConfig}
-                  />
+                  <FileUpload onUploadSuccess={handleUploadSuccess} />
                 </div>
+              ) : (
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">
+                    Login to upload a new experiment
+                  </h2>
+                  <LoginForm onLogin={onLogin} />
+                </div>
+              )}
 
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <ExperimentChart
-                    experiment={selectedExperiment}
-                    config={chartConfig}
-                  />
+              <ExperimentList
+                experiments={experiments}
+                onSelect={setSelectedExperiment}
+                selectedId={selectedExperiment?.id}
+              />
+            </div>
+
+            <div className="md:col-span-2 space-y-6">
+              {selectedExperiment ? (
+                <>
+                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4">
+                      {selectedExperiment.name}
+                    </h2>
+                    <VisualizationControls
+                      experiment={selectedExperiment}
+                      config={chartConfig}
+                      onConfigChange={setChartConfig}
+                    />
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <ExperimentChart
+                      experiment={selectedExperiment}
+                      config={chartConfig}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
+                  Select an experiment to visualize
                 </div>
-              </>
-            ) : (
-              <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
-                Select an experiment to visualize
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

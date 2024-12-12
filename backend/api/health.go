@@ -5,6 +5,7 @@ import (
 )
 
 func (app *Application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	if err := app.jsonResponse(w, http.StatusOK, "OK"); err != nil {
+		app.internalServerError(w, r, err)
+	}
 }

@@ -15,8 +15,7 @@ import (
 )
 
 func TestAuthHandler(t *testing.T) {
-	var storage store.Storage
-	storage = inmemorystore.New()
+	storage := inmemorystore.New()
 	cfg := &Config{
 		Addr: "testhost:1111",
 	}
@@ -90,7 +89,7 @@ func TestAuthHandler(t *testing.T) {
 			Username: user.Username,
 			Password: user.Password,
 		}
-		body, err := json.Marshal(creds)
+		body, _ := json.Marshal(creds)
 
 		req := httptest.NewRequest(http.MethodPost, "/authenticate", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
