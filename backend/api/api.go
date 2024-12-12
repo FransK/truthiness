@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/fransk/truthiness/internal/auth"
+	"github.com/fransk/truthiness/internal/env"
 	"github.com/fransk/truthiness/internal/store"
 )
 
@@ -32,7 +33,7 @@ func NewServer(config *Config, store *store.Storage) http.Handler {
 // Make sure requests pass through this first.
 func (app *Application) enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		w.Header().Set("Access-Control-Allow-Origin", env.GetString("CORS_ORIGIN", "http://localhost:5173"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
