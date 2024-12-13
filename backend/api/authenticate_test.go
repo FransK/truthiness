@@ -68,13 +68,23 @@ func TestAuthHandler(t *testing.T) {
 		}
 
 		t.Run(fmt.Sprintf("method: %s", http.MethodPost), func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodPost, "/authenticate", nil)
+			user, err := storage.Users().GetByUsername(context.TODO(), "testadmin")
+			if err != nil {
+				t.Errorf("failed to get testuser")
+			}
+			creds := auth.Credentials{
+				Username: user.Username,
+				Password: user.Password,
+			}
+			body, _ := json.Marshal(creds)
+			req := httptest.NewRequest(http.MethodPost, "/authenticate", bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 			rr := httptest.NewRecorder()
 			app.authHandler(rr, req)
 
-			dontwant := http.StatusMethodNotAllowed
-			if rr.Code == dontwant {
-				t.Errorf("got %v; don't want %v", rr.Code, dontwant)
+			want := http.StatusOK
+			if rr.Code != want {
+				t.Errorf("got %v; want %v", rr.Code, want)
 			}
 		})
 	})
