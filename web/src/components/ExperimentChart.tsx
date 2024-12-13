@@ -67,16 +67,7 @@ export function ExperimentChart({ experiment, config }: Props) {
             <XAxis type="number" dataKey={xAxis} name={xAxis} />
             <YAxis type="number" dataKey={yAxis} name={yAxis} />
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter
-              data={
-                trials
-                  ? trials.data.map((d) => {
-                      return d.Data;
-                    })
-                  : []
-              }
-              fill="#8884d8"
-            />
+            <Scatter data={ trials ? trials.data.map((d) => { return d.Data; }) : [] } fill="#8884d8" />
           </ScatterChart>
         ) : (
           <BarChart
