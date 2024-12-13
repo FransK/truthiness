@@ -5,14 +5,20 @@ import (
 	"math"
 )
 
-func LinearLeastSquares(x, y []float64) (float64, float64, float64, error) {
+type LinearLeastSquaresData struct {
+	M  float64 `json:"m"`
+	B  float64 `json:"b"`
+	R2 float64 `json:"r2"`
+}
+
+func LinearLeastSquares(x, y []float64) (LinearLeastSquaresData, error) {
 	if len(x) != len(y) {
-		return 0, 0, 0, fmt.Errorf("x and y must have the same length")
+		return LinearLeastSquaresData{0, 0, 0}, fmt.Errorf("x and y must have the same length")
 	}
 
 	n := float64(len(x))
 	if n == 0 {
-		return 0, 0, 0, fmt.Errorf("x and y must not be empty")
+		return LinearLeastSquaresData{0, 0, 0}, fmt.Errorf("x and y must not be empty")
 	}
 
 	// Calculate means of x and y
@@ -34,7 +40,7 @@ func LinearLeastSquares(x, y []float64) (float64, float64, float64, error) {
 	}
 
 	if sumXX == 0 {
-		return 0, 0, 0, fmt.Errorf("cannot compute a slope (vertical line)")
+		return LinearLeastSquaresData{0, 0, 0}, fmt.Errorf("cannot compute a slope (vertical line)")
 	}
 
 	m := sumXY / sumXX
@@ -50,7 +56,7 @@ func LinearLeastSquares(x, y []float64) (float64, float64, float64, error) {
 
 	r2 := 1 - (ssr / sst)
 
-	return m, b, r2, nil
+	return LinearLeastSquaresData{m, b, r2}, nil
 }
 
 // A regression model that utilizes iterative refinement
