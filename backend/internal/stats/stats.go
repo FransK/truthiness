@@ -2,6 +2,7 @@ package stats
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
 
@@ -55,6 +56,9 @@ func LinearLeastSquares(x, y []float64) (LinearLeastSquaresData, error) {
 	}
 
 	r2 := 1 - (ssr / sst)
+	r := math.Sqrt(r2)
+
+	log.Printf("Linear regression coefficients: m %v - b %v - r %v - r2 %v", m, b, r, r2)
 
 	return LinearLeastSquaresData{m, b, r2}, nil
 }
