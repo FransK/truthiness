@@ -95,6 +95,45 @@ func TestGetTrialsHandler(t *testing.T) {
 		})
 	}
 
+	t.Run("linear regression invalid axis data on one trial - shouldn't change result", func(t *testing.T) {
+		trials = append(trials, store.Trial{
+			Data: map[string]any{
+				"Age": 50,
+			},
+		})
+		req := httptest.NewRequest(http.MethodGet, "/v1/experiments/experimentname/trials?model=linear&x_axis=Age&y_axis=Difference", nil)
+		req.SetPathValue("experimentname", "testexperiment")
+		rr := httptest.NewRecorder()
+
+		app.getTrialsHandler(rr, req)
+
+		want := http.StatusOK
+		if rr.Code != want {
+			t.Errorf("got %v; want %v", rr.Code, want)
+		}
+
+		type JSONResponse struct {
+			Data []store.Trial `json:"data"`
+		}
+
+		var data JSONResponse
+		decoder := json.NewDecoder(rr.Body)
+		decoder.Decode(&data)
+
+		const tolerance = .0001
+		cmpr := cmp.Comparer(func(x, y float64) bool {
+			diff := math.Abs(x - y)
+			return diff < tolerance
+		})
+
+		expectedYs := []float64{0.1122, 0.5219, -1.2634, -0.9707}
+		for i, trial := range data.Data {
+			if !cmp.Equal(trial.Data["LineY"], expectedYs[i], cmpr) {
+				t.Errorf("trial data got %v; want %v", trial.Data["LineY"], expectedYs[i])
+			}
+		}
+	})
+
 	t.Run("linear regression call", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/v1/experiments/experimentname/trials?model=linear&x_axis=Age&y_axis=Difference", nil)
 		req.SetPathValue("experimentname", "testexperiment")

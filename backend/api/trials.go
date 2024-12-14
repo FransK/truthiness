@@ -51,16 +51,28 @@ func (app *Application) getTrialsHandler(w http.ResponseWriter, r *http.Request)
 
 	var xs, ys []float64
 	for _, trial := range trials {
-		x, err := utils.GetFloat(trial.Data[xaxis])
+		v, ok := trial.Data[xaxis]
+		if !ok {
+			log.Printf("trial does not contain value for x axis: %s", xaxis)
+			continue
+		}
+		x, err := utils.GetFloat(v)
 		if err != nil {
 			log.Printf("unable to use x axis from trial data for regression: %v", err)
 			continue
 		}
-		y, err := utils.GetFloat(trial.Data[yaxis])
+
+		v, ok = trial.Data[yaxis]
+		if !ok {
+			log.Printf("trial does not contain value for y axis: %s", yaxis)
+			continue
+		}
+		y, err := utils.GetFloat(v)
 		if err != nil {
 			log.Printf("unable to use y axis from trial data for regression: %v", err)
 			continue
 		}
+
 		xs = append(xs, x)
 		ys = append(ys, y)
 	}

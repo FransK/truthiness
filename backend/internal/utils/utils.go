@@ -8,6 +8,10 @@ import (
 )
 
 func GetFloat(unk interface{}) (float64, error) {
+	if unk == nil {
+		return math.NaN(), fmt.Errorf("cannot call GetFloat on a nil value")
+	}
+
 	var floatType = reflect.TypeOf(float64(0))
 	var stringType = reflect.TypeOf("")
 
