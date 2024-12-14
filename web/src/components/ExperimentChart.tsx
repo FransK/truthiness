@@ -23,10 +23,12 @@ interface Props {
 }
 
 export function ExperimentChart({ experiment, config }: Props) {
-  const [trialData, setTrialData] = useState<{Key: string, Value: any}[][] | undefined>(undefined)
+  const [trialData, setTrialData] = useState<{Key: string, Value: any}[][]>([])
   const { xAxis, yAxis, chartType } = config;
 
   useEffect(() => {
+    setTrialData([]);
+
     if (!experiment) {
       return;
     }
