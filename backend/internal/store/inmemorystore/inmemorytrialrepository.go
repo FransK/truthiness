@@ -30,6 +30,23 @@ func (repo *InMemoryTrialRepository) CreateMany(ctx context.Context, trials []st
 	return nil
 }
 
+func (repo *InMemoryTrialRepository) Get(ctx context.Context, keys []string) ([]store.Trial, error) {
+	response := make([]store.Trial, 0)
+	for _, trial := range repo.trials {
+		newTrial := store.Trial{
+			Data: make(map[string]any),
+		}
+		for _, k := range keys {
+			v, ok := trial.Data[k]
+			if ok {
+				newTrial.Data[k] = v
+			}
+		}
+		response = append(response, newTrial)
+	}
+	return response, nil
+}
+
 func (repo *InMemoryTrialRepository) GetAll(ctx context.Context) ([]store.Trial, error) {
 	return slices.Clone(repo.trials), nil
 }

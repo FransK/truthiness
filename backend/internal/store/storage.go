@@ -45,7 +45,7 @@ type Record struct {
 // Trial has an unknown number of columns which represent
 // the data from a single participant in an experiment
 type Trial struct {
-	Data map[string]any
+	Data map[string]any `bson:"data"`
 }
 
 // TrialRepository represents all the trials in a single
@@ -54,6 +54,7 @@ type TrialRepository interface {
 	Create(ctx context.Context, trial *Trial) error
 	CreateMany(ctx context.Context, trials []Trial) error
 	GetAll(ctx context.Context) ([]Trial, error)
+	Get(ctx context.Context, keys []string) ([]Trial, error)
 }
 
 // User needs to have an identifier

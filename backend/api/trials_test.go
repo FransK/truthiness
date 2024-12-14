@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/fransk/truthiness/internal/stats"
 	"github.com/fransk/truthiness/internal/store"
 	"github.com/fransk/truthiness/internal/store/inmemorystore"
 	"github.com/google/go-cmp/cmp"
@@ -109,13 +108,12 @@ func TestGetTrialsHandler(t *testing.T) {
 		}
 
 		type JSONResponse struct {
-			Data stats.LinearLeastSquaresData `json:"data"`
+			Data []store.Trial `json:"data"`
 		}
 
 		var data JSONResponse
 		decoder := json.NewDecoder(rr.Body)
 		decoder.Decode(&data)
-		lsd := data.Data
 
 		const tolerance = .0001
 		cmpr := cmp.Comparer(func(x, y float64) bool {
@@ -123,17 +121,11 @@ func TestGetTrialsHandler(t *testing.T) {
 			return diff < tolerance
 		})
 
-		mwant := -0.0293
-		bwant := 1.1365
-		r2want := 0.4474
-		if !cmp.Equal(lsd.M, mwant, cmpr) {
-			t.Errorf("slope m got %v; want %v", lsd.M, mwant)
-		}
-		if !cmp.Equal(lsd.B, bwant, cmpr) {
-			t.Errorf("intercept b got %v; want %v", lsd.B, bwant)
-		}
-		if !cmp.Equal(lsd.R2, r2want, cmpr) {
-			t.Errorf("coefficient R2 got %v; want %v", lsd.R2, r2want)
+		expectedYs := []float64{0.1122, 0.5219, -1.2634, -0.9707}
+		for i, trial := range data.Data {
+			if !cmp.Equal(trial.Data["LineY"], expectedYs[i], cmpr) {
+				t.Errorf("trial data got %v; want %v", trial.Data["LineY"], expectedYs[i])
+			}
 		}
 	})
 }

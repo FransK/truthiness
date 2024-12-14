@@ -1,9 +1,10 @@
 import {
   ResponsiveContainer,
-  ScatterChart,
+  ComposedChart,
   Scatter,
   BarChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -22,7 +23,7 @@ interface Props {
 }
 
 export function ExperimentChart({ experiment, config }: Props) {
-  const [trials, setTrials] = useState<GetTrialsResponse | null>(null);
+  const [trialData, setTrialData] = useState<{Key: string, Value: any}[][] | undefined>(undefined)
   const { xAxis, yAxis, chartType } = config;
 
   useEffect(() => {
@@ -30,25 +31,40 @@ export function ExperimentChart({ experiment, config }: Props) {
       return;
     }
 
+    if (!xAxis || !yAxis) {
+      return;
+    }
+
     let ignore = false;
-    setTrials(null);
-    fetch(
+    let fetchString = chartType == "scatter" ? 
       `${import.meta.env.VITE_REST_ADDR}/v1/experiments/${
         experiment.name
-      }/trials`
-    )
-      .then((response) => response.json())
+      }/trials?x_axis=${xAxis}&y_axis=${yAxis}&model=linear` :
+      `${import.meta.env.VITE_REST_ADDR}/v1/experiments/${
+        experiment.name
+      }/trials?x_axis=${xAxis}&y_axis=${yAxis}`
+    fetch(fetchString)
+      .then((response) => {
+        if (!response.ok) {
+          throw Error(response.statusText)
+        }
+        return response.json();
+      })
       .then((result: GetTrialsResponse) => {
-        if (!ignore) {
-          console.log(result);
-          setTrials(result);
+        if (!ignore) {          
+          if (result) {            
+            // After modifying the `Data` arrays, use the updated `trials.data`
+            setTrialData(result.data.map((t) => t.Data));
+          } else {
+            setTrialData([]);
+          }
         }
       })
       .catch((error) => console.error("Error fetching trials:", error));
     return () => {
       ignore = true;
     };
-  }, [experiment]);
+  }, [experiment, xAxis, yAxis]);
 
   if (!xAxis || !yAxis) {
     return (
@@ -62,22 +78,17 @@ export function ExperimentChart({ experiment, config }: Props) {
     <div className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         {chartType === "scatter" ? (
-          <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <ComposedChart data={trialData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid />
             <XAxis type="number" dataKey={xAxis} name={xAxis} />
-            <YAxis type="number" dataKey={yAxis} name={yAxis} />
+            <YAxis type="number" name={yAxis} />
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter data={ trials ? trials.data.map((d) => { return d.Data; }) : [] } fill="#8884d8" />
-          </ScatterChart>
+            <Scatter dataKey={yAxis} fill="#8884d8" />
+            <Line dataKey="LineY" stroke="#8884d8" dot={false} activeDot={false} legendType="none" />
+          </ComposedChart>
         ) : (
           <BarChart
-            data={
-              trials
-                ? trials.data.map((d) => {
-                    return d.Data;
-                  })
-                : []
-            }
+            data={ trialData }
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
