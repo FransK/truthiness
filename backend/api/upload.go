@@ -52,10 +52,6 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	// with some sort of previewer
 	keys := make([]string, 0, len(rows[0]))
 	for _, field := range rows[0] {
-		// Skip fields without a name
-		if field == "" {
-			continue
-		}
 		// Replace dots with an underscore
 		field = strings.ReplaceAll(field, ".", "_")
 		// Trim leading and trailing whitespace
