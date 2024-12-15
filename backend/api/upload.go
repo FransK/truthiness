@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/fransk/truthiness/internal/store"
 )
@@ -50,7 +51,22 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	// TODO: Add ability for USER to determine col names and row where data starts
 	// with some sort of previewer
 	keys := make([]string, 0, len(rows[0]))
-	keys = append(keys, rows[0]...)
+	for _, field := range rows[0] {
+		// Skip fields without a name
+		if field == "" {
+			continue
+		}
+		// Replace dots with an underscore
+		field = strings.ReplaceAll(field, ".", "_")
+		// Trim leading and trailing whitespace
+		field = strings.TrimSpace(field)
+		// Ensure field does not start with $
+		if strings.HasPrefix(field, "$") {
+			field = "_" + field[1:] // Replace leading $ with _
+		}
+		// Append sanitized field to keys
+		keys = append(keys, field)
+	}
 
 	// Create a records map to store the dominant type for each column
 	records := make(map[string]int)
