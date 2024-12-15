@@ -56,25 +56,31 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	records := make(map[string]int)
 
 	trials := make([]store.Trial, 0, len(rows))
-	typeCounts := make(map[string]map[int]int) // Track counts of each type per column
+	typeCounts := make(map[string]map[int]int)       // Track counts of each type per column
+	uniqueValues := make(map[string]map[string]bool) // Track unique values per columns
 
 	for _, key := range keys {
 		typeCounts[key] = map[int]int{
+			store.DataTypeUnknown:     0,
 			store.DataTypeNumeric:     0,
 			store.DataTypeCategorical: 0,
 		}
+		uniqueValues[key] = make(map[string]bool)
 	}
 
 	for _, row := range rows[1:] { // Skip header
 		data := make(map[string]any)
 		for i, key := range keys {
-			if i >= len(row) {
-				data[key] = ""
-				typeCounts[key][store.DataTypeCategorical]++
+			if i >= len(row) || row[i] == "" {
+				// Missing value
+				data[key] = nil
+				typeCounts[key][store.DataTypeUnknown]++
 				continue
 			}
 
 			value := row[i]
+			uniqueValues[key][value] = true // Track all unique values
+
 			numeric, err := strconv.ParseFloat(value, 64)
 			if err != nil {
 				// Value is not numeric
@@ -94,10 +100,26 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 
 	// Determine the final type for each columns
 	for key, counts := range typeCounts {
-		if counts[store.DataTypeNumeric] > counts[store.DataTypeCategorical] {
-			records[key] = store.DataTypeNumeric
-		} else {
+		// If the columns has missing values only, classify as unknown
+		if counts[store.DataTypeNumeric] == 0 && counts[store.DataTypeCategorical] == 0 {
+			records[key] = store.DataTypeUnknown
+			log.Printf("records[%s] is set to DataTypeUnknown", key)
+			continue
+		}
+
+		// Check for small unique value sets
+		if len(uniqueValues[key]) <= 5 {
+			log.Printf("records[%s] is set to DataTypeCategorical with %d unique values", key, len(uniqueValues[key]))
 			records[key] = store.DataTypeCategorical
+		} else {
+			// Otherwise, classify based on majority type
+			if counts[store.DataTypeNumeric] > counts[store.DataTypeCategorical] {
+				log.Printf("records[%s] is set to DataTypeNumeric with %d numerics and %d categorical", key, counts[store.DataTypeNumeric], counts[store.DataTypeCategorical])
+				records[key] = store.DataTypeNumeric
+			} else {
+				log.Printf("records[%s] is set to DataTypeCategorical with %d numerics and %d categorical", key, counts[store.DataTypeNumeric], counts[store.DataTypeCategorical])
+				records[key] = store.DataTypeCategorical
+			}
 		}
 	}
 

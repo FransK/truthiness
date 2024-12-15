@@ -49,33 +49,38 @@ func (app *Application) getTrialsHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// User has specified a model and 2 axes, perform regression
 	var xs, ys []float64
+	missingData := 0
 	for _, trial := range trials {
 		v, ok := trial.Data[xaxis]
-		if !ok {
-			log.Printf("trial does not contain value for x axis: %s", xaxis)
+		if !ok || v == nil {
+			missingData++
 			continue
 		}
 		x, err := utils.GetFloat(v)
 		if err != nil {
-			log.Printf("unable to use x axis from trial data for regression: %v", err)
+			missingData++
 			continue
 		}
 
 		v, ok = trial.Data[yaxis]
-		if !ok {
-			log.Printf("trial does not contain value for y axis: %s", yaxis)
+		if !ok || v == nil {
+			missingData++
 			continue
 		}
 		y, err := utils.GetFloat(v)
 		if err != nil {
-			log.Printf("unable to use y axis from trial data for regression: %v", err)
+			missingData++
 			continue
 		}
 
 		xs = append(xs, x)
 		ys = append(ys, y)
 	}
+
+	log.Printf("skipped %d out of %d trials due to missing data", missingData, len(trials))
+
 	regression, err := stats.LinearLeastSquares(xs, ys)
 	if err != nil {
 		app.internalServerError(w, r, fmt.Errorf("unable to compute least squares regression"))
@@ -83,6 +88,10 @@ func (app *Application) getTrialsHandler(w http.ResponseWriter, r *http.Request)
 	}
 	// regression successful, append results
 	for _, trial := range trials {
+		if trial.Data[xaxis] == nil {
+			continue
+		}
+
 		x, err := utils.GetFloat(trial.Data[xaxis])
 		if err != nil {
 			log.Printf("unable to get float from trial data: %v", err)
