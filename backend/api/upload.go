@@ -68,17 +68,17 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 		uniqueValues[key] = make(map[string]bool)
 	}
 
-	for _, row := range rows[1:] { // Skip header
+	for _, trial := range rows[1:] { // Skip header
 		data := make(map[string]any)
 		for i, key := range keys {
-			if i >= len(row) || row[i] == "" {
+			if i >= len(trial) || trial[i] == "" {
 				// Missing value
 				data[key] = nil
 				typeCounts[key][store.DataTypeUnknown]++
 				continue
 			}
 
-			value := row[i]
+			value := trial[i]
 			uniqueValues[key][value] = true // Track all unique values
 
 			numeric, err := strconv.ParseFloat(value, 64)
