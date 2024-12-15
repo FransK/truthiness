@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import {
   ChartConfig,
+  ChartType,
   GetTrialsResponse,
   IExperiment,
 } from "../types/experiment";
@@ -38,7 +39,7 @@ export function ExperimentChart({ experiment, config }: Props) {
     }
 
     let ignore = false;
-    let fetchString = chartType == "scatter" ? 
+    let fetchString = chartType == ChartType.Scatter ? 
       `${import.meta.env.VITE_REST_ADDR}/v1/experiments/${
         experiment.name
       }/trials?x_axis=${xAxis}&y_axis=${yAxis}&model=linear` :
@@ -64,7 +65,7 @@ export function ExperimentChart({ experiment, config }: Props) {
     return () => {
       ignore = true;
     };
-  }, [experiment, xAxis, yAxis]);
+  }, [experiment, xAxis, yAxis, chartType]);
 
   if (!xAxis || !yAxis) {
     return (
@@ -77,7 +78,7 @@ export function ExperimentChart({ experiment, config }: Props) {
   return (
     <div className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        {chartType === "scatter" ? (
+        {chartType == ChartType.Scatter ? (
           <ComposedChart data={trialData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid />
             <XAxis type="number" dataKey={xAxis} name={xAxis} />

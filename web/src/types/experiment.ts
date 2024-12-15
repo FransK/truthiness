@@ -6,12 +6,15 @@ export interface ExperimentData {
     createdAt: Date;
   }
   
-  export type ChartType = 'scatter' | 'bar';
+  export const ChartType = {
+    Scatter: 1,
+    Bar: 2,
+  }
   
   export interface ChartConfig {
     xAxis: string;
     yAxis: string;
-    chartType: ChartType;
+    chartType: number;
   }
 
   export interface GetExperimentsResponse {

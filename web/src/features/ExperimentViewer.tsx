@@ -5,6 +5,7 @@ import { VisualizationControls } from "../components/VisualizationControls";
 import { ExperimentChart } from "../components/ExperimentChart";
 import {
   ChartConfig,
+  ChartType,
   GetExperimentsResponse,
   IExperiment,
   IExperiments,
@@ -17,14 +18,14 @@ interface Props {
 }
 
 export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
+  const [experiments, setExperiments] = useState<IExperiments | null>(null);
   const [selectedExperiment, setSelectedExperiment] =
     useState<IExperiment | null>(null);
   const [chartConfig, setChartConfig] = useState<ChartConfig>({
     xAxis: "",
     yAxis: "",
-    chartType: "scatter",
+    chartType: ChartType.Scatter,
   });
-  const [experiments, setExperiments] = useState<IExperiments | null>(null);
 
   function fetchExperiments() {
     let ignore = false;

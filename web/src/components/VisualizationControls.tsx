@@ -1,4 +1,4 @@
-import { IExperiment, ChartConfig } from "../types/experiment";
+import { IExperiment, ChartConfig, ChartType } from "../types/experiment";
 
 interface Props {
   experiment: IExperiment;
@@ -11,14 +11,16 @@ export function VisualizationControls({
   config,
   onConfigChange,
 }: Props) {
-  const handleAxisChange = (axis: "xAxis" | "yAxis", variable: string) => {
-    if (axis === "xAxis" && experiment.records.get(variable) == 2) {
-      const chartType = "bar";
-      onConfigChange({ ...config, [axis]: variable, chartType });
-    } else {
-      const chartType = "scatter";
-      onConfigChange({ ...config, [axis]: variable, chartType });
+  const handleAxisChange = (axis: "xAxis" | "yAxis", record: string) => {   
+    var newChartType = config.chartType;
+    if (axis === "xAxis") {
+      if (experiment.records.get(record) == ChartType.Bar) {
+        newChartType = ChartType.Bar;
+      } else {
+        newChartType = ChartType.Scatter;
+      }
     }
+    onConfigChange({ ...config, [axis]: record, chartType: newChartType });
   };
 
   return (
