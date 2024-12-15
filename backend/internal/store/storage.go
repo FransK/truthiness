@@ -31,6 +31,7 @@ type ExperimentRepository interface {
 
 // For use in defining the data type of a record
 const (
+	DataTypeUnknown     = 0
 	DataTypeNumeric     = 1
 	DataTypeCategorical = 2
 )

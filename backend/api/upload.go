@@ -52,34 +52,53 @@ func (app *Application) uploadDataHandler(w http.ResponseWriter, r *http.Request
 	keys := make([]string, 0, len(rows[0]))
 	keys = append(keys, rows[0]...)
 
-	// Create a records slice that will also hold the data type of the column
-	records := make(map[string]int, 0)
+	// Create a records map to store the dominant type for each column
+	records := make(map[string]int)
 
 	trials := make([]store.Trial, 0, len(rows))
-	for _, row := range rows[1:] {
+	typeCounts := make(map[string]map[int]int) // Track counts of each type per column
+
+	for _, key := range keys {
+		typeCounts[key] = map[int]int{
+			store.DataTypeNumeric:     0,
+			store.DataTypeCategorical: 0,
+		}
+	}
+
+	for _, row := range rows[1:] { // Skip header
 		data := make(map[string]any)
-		i := 0
-		for _, key := range keys {
+		for i, key := range keys {
 			if i >= len(row) {
 				data[key] = ""
+				typeCounts[key][store.DataTypeCategorical]++
+				continue
+			}
+
+			value := row[i]
+			numeric, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				// Value is not numeric
+				data[key] = value
+				typeCounts[key][store.DataTypeCategorical]++
 			} else {
-				var datatype int
-				numeric, err := strconv.ParseFloat(row[i], 64)
-				if err != nil {
-					datatype = store.DataTypeCategorical
-					data[key] = row[i]
-				} else {
-					datatype = store.DataTypeNumeric
-					data[key] = numeric
-				}
-				records[key] = datatype
-				i++
+				// Value is numeric
+				data[key] = numeric
+				typeCounts[key][store.DataTypeNumeric]++
 			}
 		}
 
 		trials = append(trials, store.Trial{
 			Data: data,
 		})
+	}
+
+	// Determine the final type for each columns
+	for key, counts := range typeCounts {
+		if counts[store.DataTypeNumeric] > counts[store.DataTypeCategorical] {
+			records[key] = store.DataTypeNumeric
+		} else {
+			records[key] = store.DataTypeCategorical
+		}
 	}
 
 	experiment := store.Experiment{
