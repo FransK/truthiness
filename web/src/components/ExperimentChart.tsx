@@ -84,8 +84,8 @@ export function ExperimentChart({ experiment, config }: Props) {
             <XAxis type="number" dataKey={xAxis} name={xAxis} />
             <YAxis type="number" name={yAxis} />
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter dataKey={yAxis} fill="#8884d8" />
-            <Line dataKey="LineY" stroke="#8884d8" dot={false} activeDot={false} legendType="none" />
+            <Scatter dataKey={yAxis} fill="#8884d8" isAnimationActive={false} />
+            <Line dataKey="LineY" stroke="#8884d8" dot={false} activeDot={false} legendType="none" isAnimationActive={false} />
           </ComposedChart>
         ) : (
           <BarChart
@@ -96,7 +96,7 @@ export function ExperimentChart({ experiment, config }: Props) {
             <XAxis dataKey={xAxis} />
             <YAxis />
             <Tooltip />
-            <Bar dataKey={yAxis} fill="#8884d8" />
+            <Bar dataKey={yAxis} fill="#8884d8" isAnimationActive={false} />
           </BarChart>
         )}
       </ResponsiveContainer>
