@@ -12,7 +12,7 @@ export function VisualizationControls({
   onConfigChange,
 }: Props) {
   const handleAxisChange = (axis: "xAxis" | "yAxis", record: string) => {   
-    var newChartType = config.chartType;
+    let newChartType = config.chartType;
     if (axis === "xAxis") {
       if (experiment.records.get(record) == ChartType.Bar) {
         newChartType = ChartType.Bar;
