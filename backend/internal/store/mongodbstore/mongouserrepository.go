@@ -18,7 +18,11 @@ func (repo *MongoUserRepository) GetAll(ctx context.Context) ([]store.User, erro
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			log.Printf("warning: failed to close cursor: %v", closeErr)
+		}
+	}()
 
 	users := make([]store.User, 0)
 	if err = cursor.All(ctx, &users); err != nil {

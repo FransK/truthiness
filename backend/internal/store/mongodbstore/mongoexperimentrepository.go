@@ -29,7 +29,11 @@ func (repo *MongoExperimentRepository) GetAll(ctx context.Context) ([]store.Expe
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			log.Printf("warning: failed to close cursor: %v", closeErr)
+		}
+	}()
 
 	experiments := make([]store.Experiment, 0)
 	if err = cursor.All(ctx, &experiments); err != nil {
