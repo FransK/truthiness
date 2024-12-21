@@ -125,7 +125,7 @@ export function ExperimentChart({ experiment, config }: Props) {
             <YAxis label={{value: "Mean " + yAxis, angle: -90, position: "left"}}/>
             <Tooltip />
             <Bar dataKey="mean" fill="#8884d8" isAnimationActive={false}>
-              <LabelList dataKey="count" position="top" />
+              <LabelList dataKey="label" position="top" />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -166,7 +166,7 @@ function calculateAverages(trialData: Array<Record<string, any>>, xAxis: string,
     return {
       key: key,
       mean: value.sum / value.count,
-      count: value.count,
+      label: "Count: " + value.count,
     }
   });
 
