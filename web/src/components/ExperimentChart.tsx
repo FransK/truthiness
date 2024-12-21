@@ -57,7 +57,7 @@ export function ExperimentChart({ experiment, config }: Props) {
         if (!ignore) {          
           if (result) {            
             // After modifying the `Data` arrays, use the updated `trials.data`
-            setTrialData(result.data.map((t) => t.Data));
+            setTrialData(result.data.map((t) => t.data));
           }
         }
       })

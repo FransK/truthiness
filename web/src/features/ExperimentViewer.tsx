@@ -36,8 +36,8 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
           const experiments = result.data.map((e, index) => {
             return {
               id: index,
-              name: e.Name,
-              records: new Map(Object.entries(e.Records)),
+              name: e.name,
+              records: new Map(Object.entries(e.records)),
             };
           });
           setExperiments(experiments);

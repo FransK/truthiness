@@ -19,10 +19,10 @@ export interface ExperimentData {
 
   export interface GetExperimentsResponse {
     data: {
-      Name: string;
-      Date: string;
-      Location: string;
-      Records: Map<string, number>;
+      name: string;
+      date: string;
+      location: string;
+      records: Map<string, number>;
     }[];
   }
 
@@ -36,6 +36,6 @@ export interface ExperimentData {
 
   export interface GetTrialsResponse {
     data: {
-      Data: { Key: string; Value: any }[];
+      data: { Key: string; Value: any }[];
     }[];
   }

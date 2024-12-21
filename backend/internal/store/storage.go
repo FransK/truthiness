@@ -16,10 +16,10 @@ type Storage interface {
 // Experiment is a single run of an experiment that
 // will have recruited participants to a number of trials
 type Experiment struct {
-	Name     string
-	Date     string
-	Location string
-	Records  map[string]int
+	Name     string         `json:"name"`
+	Date     string         `json:"date"`
+	Location string         `json:"location"`
+	Records  map[string]int `json:"records"`
 }
 
 // ExperimentRepository contains a list of all the
@@ -46,7 +46,7 @@ type Record struct {
 // Trial has an unknown number of columns which represent
 // the data from a single participant in an experiment
 type Trial struct {
-	Data map[string]any `bson:"data"`
+	Data map[string]any `json:"data"`
 }
 
 // TrialRepository represents all the trials in a single
@@ -60,11 +60,11 @@ type TrialRepository interface {
 
 // User needs to have an identifier
 type User struct {
-	ID          int64  `bson:"_id"`
-	Username    string `bson:"username"`
-	Password    string
-	Role        string
-	Permissions []string
+	ID          int64    `json:"_id"`
+	Username    string   `json:"username"`
+	Password    string   `json:"password"`
+	Role        string   `json:"role"`
+	Permissions []string `json:"permissions"`
 }
 
 type UserRepository interface {

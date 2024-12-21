@@ -14,8 +14,13 @@ func New(addr string, maxOpenConns int, maxIdleTime time.Duration) (*mongo.Datab
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	bsonOpts := &options.BSONOptions{
+		UseJSONStructTags: true,
+	}
+
 	clientOpts := options.Client()
 	clientOpts.ApplyURI(addr)
+	clientOpts.SetBSONOptions(bsonOpts)
 	clientOpts.SetMaxConnecting(uint64(maxOpenConns))
 	clientOpts.SetMaxConnIdleTime(maxIdleTime)
 
