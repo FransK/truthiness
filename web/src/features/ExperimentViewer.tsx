@@ -64,10 +64,8 @@ export function ExperimentViewer({ onLogin, isLoggedIn }: Props) {
           Experiment Data Visualizer
         </h1>
         {!experiments ? (
-          <div>
-            Uh oh! Something's gone wrong... hang tight we're working on it
-            </div>
-            ):(
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-current border-e-transparent"></div>
+        ):(
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-8">
               {isLoggedIn ? (
